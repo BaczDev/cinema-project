@@ -19,14 +19,14 @@ public enum ErrorCode {
     //cinema
     CINEMA_NOTFOUND(2000,"cinema not found"),
     CINEMA_EXISTED(2001, "cinema existed"),
-    CINEMA_NAME_NOTNULL(2002, "cinema name not null"),
-    CINEMA_ADDRESS_NOTNULL(2003, "cinema address not null"),
+    CINEMA_NAME_NOT_BLANK(2002, "cinema name not blank"),
+    CINEMA_ADDRESS_NOT_BLANK(2003, "cinema address not blank"),
 
 
     //room
     ROOM_NOTFOUND(3000, "room not found"),
     ROOM_EXISTED(3001, "room existed"),
-    ROOM_NAME_NOTNULL(3002, "room name not null"),
+    ROOM_NAME_NOT_BLANK(3002, "room name not blank"),
     CINEMA_ID_NOTNULL(3003, "cinema id not null"),
 
 

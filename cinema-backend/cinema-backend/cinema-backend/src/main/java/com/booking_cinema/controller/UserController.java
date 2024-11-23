@@ -5,7 +5,7 @@ import com.booking_cinema.dto.request.user.UserUpdateRequest;
 import com.booking_cinema.dto.response.ApiResponse;
 import com.booking_cinema.dto.response.user.UserResponse;
 import com.booking_cinema.model.User;
-import com.booking_cinema.service.IUserService;
+import com.booking_cinema.service.user.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +61,6 @@ public class UserController {
     @DeleteMapping("/delete/{userId}")
     public String deletedUser(@PathVariable Long userId){
         iUserService.deleteUser(userId);
-        return "user has been deleted";
+        return "deleted user with ID= "+ userId;
     }
 }

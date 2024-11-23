@@ -23,6 +23,8 @@ public class CinemaService implements ICinemaService{
         cinemaResponse.setCinemaId(existingCinema.getCinemaId());
         cinemaResponse.setCinemaName(existingCinema.getCinemaName());
         cinemaResponse.setCinemaAddress(existingCinema.getCinemaAddress());
+        cinemaResponse.setCreatedAt(existingCinema.getCreatedAt());
+        cinemaResponse.setUpdatedAt(existingCinema.getUpdatedAt());
         return cinemaResponse;
     }
 
@@ -33,7 +35,9 @@ public class CinemaService implements ICinemaService{
                 .map(cinema -> new CinemaResponse(
                         cinema.getCinemaId(),
                         cinema.getCinemaName(),
-                        cinema.getCinemaAddress()
+                        cinema.getCinemaAddress(),
+                        cinema.getCreatedAt(),
+                        cinema.getUpdatedAt()
                 ))
                 .toList();
     }
@@ -60,6 +64,8 @@ public class CinemaService implements ICinemaService{
         cinemaResponse.setCinemaId(existingCinema.getCinemaId());
         cinemaResponse.setCinemaName(existingCinema.getCinemaName());
         cinemaResponse.setCinemaAddress(existingCinema.getCinemaAddress());
+        cinemaResponse.setCreatedAt(existingCinema.getCreatedAt());
+        cinemaResponse.setUpdatedAt(existingCinema.getUpdatedAt());
         return cinemaResponse;
 
     }

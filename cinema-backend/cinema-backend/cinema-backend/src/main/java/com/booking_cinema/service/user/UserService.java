@@ -1,4 +1,4 @@
-package com.booking_cinema.service;
+package com.booking_cinema.service.user;
 
 import com.booking_cinema.dto.request.user.UserCreationRequest;
 import com.booking_cinema.dto.request.user.UserUpdateRequest;
@@ -7,6 +7,7 @@ import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
 import com.booking_cinema.model.User;
 import com.booking_cinema.repository.UserRepository;
+import com.booking_cinema.service.user.IUserService;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService{
+public class UserService implements IUserService {
     private final UserRepository userRepository;
     @Override
     public UserResponse getUser(Long userId) {
@@ -28,6 +29,8 @@ public class UserService implements IUserService{
         userResponse.setUserName(existingUser.get().getUserName());
         userResponse.setEmail(existingUser.get().getEmail());
         userResponse.setPhoneNumber(existingUser.get().getPhoneNumber());
+        userResponse.setCreatedAt(existingUser.get().getCreatedAt());
+        userResponse.setUpdatedAt(existingUser.get().getUpdatedAt());
         return userResponse;
     }
 
@@ -39,7 +42,9 @@ public class UserService implements IUserService{
                                       user.getUserId(),
                                       user.getUserName(),
                                       user.getEmail(),
-                                      user.getPhoneNumber()
+                                      user.getPhoneNumber(),
+                                      user.getCreatedAt(),
+                                      user.getUpdatedAt()
                               ))
                               .toList();
     }
@@ -70,6 +75,8 @@ public class UserService implements IUserService{
         userResponse.setUserName(existingUser.getUserName());
         userResponse.setEmail(existingUser.getEmail());
         userResponse.setPhoneNumber(existingUser.getPhoneNumber());
+        userResponse.setCreatedAt(existingUser.getCreatedAt());
+        userResponse.setUpdatedAt(existingUser.getUpdatedAt());
         return userResponse;
     }
 

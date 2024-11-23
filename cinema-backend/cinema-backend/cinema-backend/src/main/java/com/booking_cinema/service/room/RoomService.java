@@ -30,6 +30,8 @@ public class RoomService implements IRoomService{
         roomResponse.setRoomId(existingRoom.getRoomId());
         roomResponse.setRoomName(existingRoom.getRoomName());
         roomResponse.setCinemaId(existingRoom.getRoomId());
+        roomResponse.setCreatedAt(existingRoom.getCreatedAt());
+        roomResponse.setUpdatedAt(existingRoom.getUpdatedAt());
         return roomResponse;
     }
 
@@ -42,7 +44,9 @@ public class RoomService implements IRoomService{
                 .map(room -> new RoomResponse(
                         room.getRoomId(),
                         room.getRoomName(),
-                        room.getCinemaId().getCinemaId()
+                        room.getCinemaId().getCinemaId(),
+                        room.getCreatedAt(),
+                        room.getUpdatedAt()
                 ))
                 .toList();
     }
@@ -82,6 +86,8 @@ public class RoomService implements IRoomService{
         roomResponse.setRoomId(newRoom.getRoomId());
         roomResponse.setRoomName(newRoom.getRoomName());
         roomResponse.setCinemaId(newRoom.getRoomId());
+        roomResponse.setCreatedAt(newRoom.getCreatedAt());
+        roomResponse.setUpdatedAt(newRoom.getUpdatedAt());
         return roomResponse;
     }
 
@@ -97,6 +103,8 @@ public class RoomService implements IRoomService{
         roomResponse.setRoomId(existingRoom.getRoomId());
         roomResponse.setRoomName(existingRoom.getRoomName());
         roomResponse.setCinemaId(existingRoom.getCinemaId().getCinemaId());
+        roomResponse.setCreatedAt(existingRoom.getCreatedAt());
+        roomResponse.setUpdatedAt(existingRoom.getUpdatedAt());
         return roomResponse;
     }
 

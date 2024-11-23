@@ -1,4 +1,4 @@
-package com.booking_cinema.service;
+package com.booking_cinema.service.user;
 
 import com.booking_cinema.dto.request.user.UserCreationRequest;
 import com.booking_cinema.dto.request.user.UserUpdateRequest;
