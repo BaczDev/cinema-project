@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Seat {
+public class Seat extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatId;
@@ -23,6 +23,9 @@ public class Seat {
 
     @Column(name = "row_seat")
     private int rowSeat;
+
+    @Column(name = "seat_status")
+    private String seatStatus;
 
     @JoinColumn(name = "room_id")
     @ManyToOne

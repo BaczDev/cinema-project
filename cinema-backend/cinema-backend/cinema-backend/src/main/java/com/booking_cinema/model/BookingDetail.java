@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookingDetail {
+public class BookingDetail extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingDetailId;
@@ -23,25 +23,5 @@ public class BookingDetail {
 
     @Column(name = "payment_method")
     private String paymentMethod;
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate(){
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate(){
-        updatedAt = LocalDateTime.now();
-    }
-
-
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking bookingId;
 }
