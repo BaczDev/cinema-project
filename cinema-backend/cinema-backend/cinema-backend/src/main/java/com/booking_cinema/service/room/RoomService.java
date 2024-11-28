@@ -26,12 +26,7 @@ public class RoomService implements IRoomService{
     public RoomResponse getRoom(Long roomId) {
         Room existingRoom = roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));
-        RoomResponse roomResponse = new RoomResponse();
-        roomResponse.setRoomId(existingRoom.getRoomId());
-        roomResponse.setRoomName(existingRoom.getRoomName());
-        roomResponse.setCinemaId(existingRoom.getRoomId());
-        roomResponse.setCreatedAt(existingRoom.getCreatedAt());
-        roomResponse.setUpdatedAt(existingRoom.getUpdatedAt());
+        RoomResponse roomResponse = RoomResponse.toRoomResponse(existingRoom);
         return roomResponse;
     }
 
@@ -82,12 +77,7 @@ public class RoomService implements IRoomService{
         }
         seatRepository.saveAll(seats);
 
-        RoomResponse roomResponse = new RoomResponse();
-        roomResponse.setRoomId(newRoom.getRoomId());
-        roomResponse.setRoomName(newRoom.getRoomName());
-        roomResponse.setCinemaId(newRoom.getRoomId());
-        roomResponse.setCreatedAt(newRoom.getCreatedAt());
-        roomResponse.setUpdatedAt(newRoom.getUpdatedAt());
+        RoomResponse roomResponse = RoomResponse.toRoomResponse(newRoom);
         return roomResponse;
     }
 
@@ -99,12 +89,8 @@ public class RoomService implements IRoomService{
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
         existingRoom.setRoomName(request.getRoomName());
         existingRoom.setCinemaId(existingCinema);
-        RoomResponse roomResponse = new RoomResponse();
-        roomResponse.setRoomId(existingRoom.getRoomId());
-        roomResponse.setRoomName(existingRoom.getRoomName());
-        roomResponse.setCinemaId(existingRoom.getCinemaId().getCinemaId());
-        roomResponse.setCreatedAt(existingRoom.getCreatedAt());
-        roomResponse.setUpdatedAt(existingRoom.getUpdatedAt());
+        roomRepository.save(existingRoom);
+        RoomResponse roomResponse = RoomResponse.toRoomResponse(existingRoom);
         return roomResponse;
     }
 

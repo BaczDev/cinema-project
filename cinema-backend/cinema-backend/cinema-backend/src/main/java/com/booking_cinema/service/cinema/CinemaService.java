@@ -19,12 +19,7 @@ public class CinemaService implements ICinemaService{
     public CinemaResponse getCinema(Long cinemaId) {
         Cinema existingCinema = cinemaRepository.findById(cinemaId).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
-        CinemaResponse cinemaResponse = new CinemaResponse();
-        cinemaResponse.setCinemaId(existingCinema.getCinemaId());
-        cinemaResponse.setCinemaName(existingCinema.getCinemaName());
-        cinemaResponse.setCinemaAddress(existingCinema.getCinemaAddress());
-        cinemaResponse.setCreatedAt(existingCinema.getCreatedAt());
-        cinemaResponse.setUpdatedAt(existingCinema.getUpdatedAt());
+        CinemaResponse cinemaResponse = CinemaResponse.toCinemaResponse(existingCinema);
         return cinemaResponse;
     }
 
@@ -43,14 +38,16 @@ public class CinemaService implements ICinemaService{
     }
 
     @Override
-    public Cinema createCinema(CinemaRequest request) {
+    public CinemaResponse createCinema(CinemaRequest request) {
         if(cinemaRepository.existsByCinemaName(request.getCinemaName())){
             throw new AppException(ErrorCode.CINEMA_EXISTED);
         }
         Cinema newCinema = new Cinema();
         newCinema.setCinemaName(request.getCinemaName());
         newCinema.setCinemaAddress(request.getCinemaAddress());
-        return cinemaRepository.save(newCinema);
+        cinemaRepository.save(newCinema);
+        CinemaResponse cinemaResponse = CinemaResponse.toCinemaResponse(newCinema);
+        return cinemaResponse;
     }
 
     @Override
@@ -60,12 +57,7 @@ public class CinemaService implements ICinemaService{
         existingCinema.setCinemaName(request.getCinemaName());
         existingCinema.setCinemaAddress(request.getCinemaAddress());
         cinemaRepository.save(existingCinema);
-        CinemaResponse cinemaResponse = new CinemaResponse();
-        cinemaResponse.setCinemaId(existingCinema.getCinemaId());
-        cinemaResponse.setCinemaName(existingCinema.getCinemaName());
-        cinemaResponse.setCinemaAddress(existingCinema.getCinemaAddress());
-        cinemaResponse.setCreatedAt(existingCinema.getCreatedAt());
-        cinemaResponse.setUpdatedAt(existingCinema.getUpdatedAt());
+        CinemaResponse cinemaResponse = CinemaResponse.toCinemaResponse(existingCinema);
         return cinemaResponse;
 
     }

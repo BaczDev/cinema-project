@@ -2,7 +2,7 @@ package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.user.UserCreationRequest;
 import com.booking_cinema.dto.request.user.UserUpdateRequest;
-import com.booking_cinema.dto.response.ApiResponse;
+import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.user.UserResponse;
 import com.booking_cinema.model.User;
 import com.booking_cinema.service.user.IUserService;

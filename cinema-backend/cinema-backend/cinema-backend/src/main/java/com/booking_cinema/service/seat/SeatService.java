@@ -51,16 +51,7 @@ public class SeatService implements ISeatService{
         existingSeat.setRoomId(existingRoom);
         seatRepository.save(existingSeat);
 
-        SeatResponse seatResponse = new SeatResponse();
-
-        seatResponse.setSeatId(existingSeat.getSeatId());
-        seatResponse.setSeatType(existingSeat.getSeatType());
-        seatResponse.setNumber(existingSeat.getNumber());
-        seatResponse.setRowSeat(existingSeat.getRowSeat());
-        seatResponse.setSeatStatus(existingSeat.getSeatStatus());
-        seatResponse.setRoomId(existingSeat.getRoomId().getRoomId());
-        seatResponse.setCreatedAt(existingSeat.getCreatedAt());
-        seatResponse.setUpdatedAt(existingSeat.getUpdatedAt());
+        SeatResponse seatResponse = SeatResponse.toSeatResponse(existingSeat);
         return seatResponse;
     }
 }

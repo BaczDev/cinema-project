@@ -37,6 +37,19 @@ public enum ErrorCode {
     ROW_SEAT_NOTNULL(4003, "row seat is not null"),
     SEAT_STATUS_NOTNULL(4004, "seat status not null"),
     ROOM_ID_NOTNULL(4005, "room id is not null"),
+
+    //movie
+    MOVIE_NOTFOUND(5000,"movie not found"),
+    MOVIE_EXISTED(5001, "movie existed"),
+    MOVIE_NAME_NOT_BLANK(5002,"movie name not blank"),
+    MOVIE_LENGTH_NOT_BLANK(5003,"movie length not blank"),
+
+    //movie poster
+    FILE_IS_NULL(6000, "file is null"),
+    FILE_TOO_LARGE(6001, "File is too large! Maximum size is 10MB"),
+    INVALID_FILE_FORMAT(6002, "File must be an image"),
+    FILE_UPLOAD_FAILED(6003,"Failed to upload file"),
+
     ;
 
     private int errorCode;

@@ -9,7 +9,7 @@ import java.util.List;
 public interface ICinemaService {
     CinemaResponse getCinema(Long cinemaId);
     List<CinemaResponse> getAllCinemas();
-    Cinema createCinema(CinemaRequest request);
+    CinemaResponse createCinema(CinemaRequest request);
     CinemaResponse updateCinema(Long cinemaId, CinemaRequest request);
     void deleteCinema(Long cinemaId);
 }

@@ -1,7 +1,7 @@
 package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.seat.SeatUpdateRequest;
-import com.booking_cinema.dto.response.ApiResponse;
+import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.seat.SeatResponse;
 import com.booking_cinema.service.seat.ISeatService;
 import jakarta.validation.Valid;

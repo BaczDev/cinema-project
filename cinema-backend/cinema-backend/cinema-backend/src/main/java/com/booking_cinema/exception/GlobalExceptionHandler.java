@@ -1,6 +1,6 @@
 package com.booking_cinema.exception;
 
-import com.booking_cinema.dto.response.ApiResponse;
+import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

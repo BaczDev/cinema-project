@@ -1,7 +1,7 @@
 package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.room.RoomRequest;
-import com.booking_cinema.dto.response.ApiResponse;
+import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.room.RoomResponse;
 import com.booking_cinema.service.room.IRoomService;
 import jakarta.validation.Valid;

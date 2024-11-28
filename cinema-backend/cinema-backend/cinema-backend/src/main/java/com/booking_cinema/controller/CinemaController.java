@@ -1,7 +1,7 @@
 package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.cinema.CinemaRequest;
-import com.booking_cinema.dto.response.ApiResponse;
+import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.cinema.CinemaResponse;
 import com.booking_cinema.model.Cinema;
 import com.booking_cinema.service.cinema.ICinemaService;
@@ -40,8 +40,8 @@ public class CinemaController {
     }
 
     @PostMapping("/create")
-    public ApiResponse<Cinema> createCinema(@RequestBody @Valid CinemaRequest request){
-        return ApiResponse.<Cinema>builder()
+    public ApiResponse<CinemaResponse> createCinema(@RequestBody @Valid CinemaRequest request){
+        return ApiResponse.<CinemaResponse>builder()
                 .success(true)
                 .errorCode(0)
                 .errorMessage("")
