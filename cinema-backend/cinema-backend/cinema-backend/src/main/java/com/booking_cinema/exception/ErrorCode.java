@@ -59,7 +59,17 @@ public enum ErrorCode {
     END_TIME_NOTNULL(704, "end time not null"),
     MOVIE_ID_NOTNULL(705, "movie id not null"),
 
+    //movie detail
+    MOVIE_DETAIL_NOTFOUND(800, "movie detail not found"),
+    MOVIE_DETAIL_EXISTED(801, "movie detail with movie existed"),
+    VIDEO_TOO_LARGE(802, "Video is too large! Maximum size is 100MB"),
+    INVALID_VIDEO_FORMAT(803, "File must be an video"),
 
+    MOVIE_DESCRIPTION_NOTNULL(804, "movie description not null"),
+    MOVIE_TRAILER_NOTNULL(804, "movie trailer not null"),
+    MOVIE_GENRE_NOTNULL(804, "movie genre not null"),
+    RELEASE_DATE_NOTNULL(804, "release date not null"),
+    MOVIE_LANGUAGE_NOTNULL(804, "movie language not null"),
     ;
 
     private int errorCode;
