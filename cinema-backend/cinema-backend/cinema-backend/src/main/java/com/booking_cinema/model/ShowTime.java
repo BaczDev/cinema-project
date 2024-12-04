@@ -2,6 +2,9 @@ package com.booking_cinema.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Table(name = "showtimes")
@@ -18,7 +21,7 @@ public class ShowTime extends BaseEntity{
     private Long showtimeId;
 
     @Column(name = "show_date")
-    private Date showDate;
+    private LocalDate showDate;
 
     @Column(name = "start_time")
     private String startTime;
