@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class BookingResponse {
     private Long bookingId;
     private float price;
+    private float totalMoney;
     private Long userId;
     private Long cinemaId;
     private Long movieId;
@@ -24,6 +25,7 @@ public class BookingResponse {
         return BookingResponse.builder()
                 .bookingId(booking.getBookingId())
                 .price(booking.getPrice())
+                .totalMoney(booking.getTotalMoney())
                 .userId(booking.getUserId().getUserId())
                 .cinemaId(booking.getCinemaId().getCinemaId())
                 .movieId(booking.getMovieId().getMovieId())

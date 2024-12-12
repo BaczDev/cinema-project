@@ -19,6 +19,9 @@ public class Booking {
     @Column(name = "price")
     private float price;
 
+    @Column(name = "total_money")
+    private float totalMoney;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
