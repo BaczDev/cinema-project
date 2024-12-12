@@ -30,7 +30,6 @@ public class SeatService implements ISeatService{
                         seat.getSeatType(),
                         seat.getNumber(),
                         seat.getRowSeat(),
-                        seat.getSeatStatus(),
                         seat.getRoomId().getRoomId(),
                         seat.getCreatedAt(),
                         seat.getUpdatedAt()
@@ -47,7 +46,6 @@ public class SeatService implements ISeatService{
         existingSeat.setSeatType(request.getSeatType());
         existingSeat.setNumber(request.getNumber());
         existingSeat.setRowSeat(request.getRowSeat());
-        existingSeat.setSeatStatus(request.getSeatStatus());
         existingSeat.setRoomId(existingRoom);
         seatRepository.save(existingSeat);
 

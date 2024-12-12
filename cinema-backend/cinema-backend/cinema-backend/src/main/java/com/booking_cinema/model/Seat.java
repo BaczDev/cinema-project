@@ -1,5 +1,7 @@
 package com.booking_cinema.model;
 
+import com.booking_cinema.model.BaseEntity;
+import com.booking_cinema.model.Room;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Seat extends BaseEntity{
+public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seatId;
@@ -23,9 +25,6 @@ public class Seat extends BaseEntity{
 
     @Column(name = "row_seat")
     private int rowSeat;
-
-    @Column(name = "seat_status")
-    private String seatStatus;
 
     @JoinColumn(name = "room_id")
     @ManyToOne

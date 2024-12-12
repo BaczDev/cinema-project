@@ -20,9 +20,6 @@ public class SeatUpdateRequest {
     @NotNull(message = "ROW_SEAT_NOTNULL")
     private int rowSeat;
 
-    @NotNull(message = "SEAT_STATUS_NOTNULL")
-    private String seatStatus;
-
     @NotNull(message = "ROOM_ID_NOTNULL")
     private Long roomId;
 }

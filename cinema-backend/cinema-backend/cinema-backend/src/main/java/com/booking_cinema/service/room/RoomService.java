@@ -70,7 +70,6 @@ public class RoomService implements IRoomService{
                 }else {
                     seat.setSeatType("vip");
                 }
-                seat.setSeatStatus("available");
                 seat.setRoomId(newRoom);
                 seats.add(seat);
             }

@@ -19,9 +19,6 @@ public class Booking {
     @Column(name = "price")
     private float price;
 
-    @Column(name = "seat_status")
-    private String seatStatus;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
@@ -37,4 +34,8 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "showtime_id")
     private ShowTime showtimeId;
+
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    private Movie movieId;
 }

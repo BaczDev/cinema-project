@@ -35,7 +35,6 @@ public enum ErrorCode {
     SEAT_TYPE_NOTNULL(401, "seat type is normal or vip"),
     SEAT_NUMBER_NOTNULL(402, "number is not null"),
     ROW_SEAT_NOTNULL(403, "row seat is not null"),
-    SEAT_STATUS_NOTNULL(404, "seat status not null"),
     ROOM_ID_NOTNULL(405, "room id is not null"),
 
     //movie
@@ -70,6 +69,15 @@ public enum ErrorCode {
     MOVIE_GENRE_NOTNULL(804, "movie genre not null"),
     RELEASE_DATE_NOTNULL(804, "release date not null"),
     MOVIE_LANGUAGE_NOTNULL(804, "movie language not null"),
+
+    //booking
+    BOOKING_NOTFOUND(900, "booking not found"),
+    SEAT_BOOKED(901, "The seat has been booked."),
+    PRICE_NOTNULL(902, "price not null"),
+    USER_ID_NOTNULL(903, "user id not null"),
+    SEAT_ID_NOTNULL(904, "seat id not null"),
+    SHOWTIME_ID_NOTNULL(905, "showtime id not null"),
+
     ;
 
     private int errorCode;
