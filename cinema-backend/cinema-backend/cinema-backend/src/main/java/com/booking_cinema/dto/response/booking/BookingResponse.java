@@ -25,7 +25,6 @@ public class BookingResponse {
         return BookingResponse.builder()
                 .bookingId(booking.getBookingId())
                 .price(booking.getPrice())
-                .totalMoney(booking.getTotalMoney())
                 .userId(booking.getUserId().getUserId())
                 .cinemaId(booking.getCinemaId().getCinemaId())
                 .movieId(booking.getMovieId().getMovieId())

@@ -49,7 +49,6 @@ public class BookingService implements IBookingService{
         for (Seat seat : seats) {
             Booking newBooking = new Booking();
             newBooking.setPrice(request.getPrice());
-            newBooking.setTotalMoney(request.getTotalMoney());
             newBooking.setUserId(existingUser);
             newBooking.setCinemaId(existingCinema);
             newBooking.setMovieId(existingMovie);

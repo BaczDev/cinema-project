@@ -78,6 +78,8 @@ public enum ErrorCode {
     SEAT_ID_NOTNULL(904, "seat id not null"),
     SHOWTIME_ID_NOTNULL(905, "showtime id not null"),
 
+    //bill
+    BOOKING_ID_NOTFOUND(1000, "booking id not found"),
     ;
 
     private int errorCode;
