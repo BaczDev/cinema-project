@@ -9,6 +9,7 @@ import com.booking_cinema.service.user.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,9 +40,19 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("/myInfo")
+    public ApiResponse<UserResponse> getMyInfo(){
+        return ApiResponse.<UserResponse>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iUserService.getMyInfo())
+                .build();
+    }
+
     @PostMapping("/register")
-    public ApiResponse<User> createdUser(@RequestBody @Valid UserCreationRequest request){
-        return ApiResponse.<User>builder()
+    public ApiResponse<UserResponse> createdUser(@RequestBody @Valid UserCreationRequest request){
+        return ApiResponse.<UserResponse>builder()
                 .success(true)
                 .errorCode(0)
                 .errorMessage("")

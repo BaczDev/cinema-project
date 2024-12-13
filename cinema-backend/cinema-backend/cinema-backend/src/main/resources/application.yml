@@ -20,3 +20,6 @@ spring:
       hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
       format_sql: true
+
+jwt:
+  secretKey: KJfhrflyl7DKpWYDch8WBiaNMvyuy1uXcrZkmLJfOO6X7yW8DJegUouy35tHN6dw

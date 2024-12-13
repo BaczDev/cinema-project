@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 public enum ErrorCode {
     UNCATEGORIZED_ERROR(999,"uncategorized error"),
+
     //user
     USER_NOTFOUND(100,"user not found"),
     USER_EXISTED(101,"user existed"),
@@ -14,6 +15,7 @@ public enum ErrorCode {
     PASSWORD_INVALID(103,"password must be at least 6 characters"),
     PHONE_NUMBER_INVALID(104, "phone number must be at least 10 characters"),
     EMAIL_INCORRECT(105,"email format is incorrect"),
+    ROLE_NOTFOUND(106, "role not found"),
 
 
     //cinema
@@ -80,6 +82,9 @@ public enum ErrorCode {
 
     //bill
     BOOKING_ID_NOTFOUND(1000, "booking id not found"),
+
+    //auth
+    UNAUTHENTICATED(2000, "unauthenticated")
     ;
 
     private int errorCode;

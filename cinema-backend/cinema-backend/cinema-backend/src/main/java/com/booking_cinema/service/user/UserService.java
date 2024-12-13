@@ -5,10 +5,17 @@ import com.booking_cinema.dto.request.user.UserUpdateRequest;
 import com.booking_cinema.dto.response.user.UserResponse;
 import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
+import com.booking_cinema.model.Role;
 import com.booking_cinema.model.User;
+import com.booking_cinema.repository.RoleRepository;
 import com.booking_cinema.repository.UserRepository;
 import com.booking_cinema.service.user.IUserService;
 import lombok.*;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,23 +25,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder passwordEncoder;
     @Override
+    @PostAuthorize("returnObject.userName == authentication.name")
     public UserResponse getUser(Long userId) {
-        Optional<User> existingUser = userRepository.findById(userId);
-        if (existingUser.isEmpty()){
-            throw new AppException(ErrorCode.USER_NOTFOUND);
-        }
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUserId(existingUser.get().getUserId());
-        userResponse.setUserName(existingUser.get().getUserName());
-        userResponse.setEmail(existingUser.get().getEmail());
-        userResponse.setPhoneNumber(existingUser.get().getPhoneNumber());
-        userResponse.setCreatedAt(existingUser.get().getCreatedAt());
-        userResponse.setUpdatedAt(existingUser.get().getUpdatedAt());
+        User existingUser = userRepository.findById(userId).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOTFOUND));
+
+        UserResponse userResponse = UserResponse.toUserResponse(existingUser);
         return userResponse;
     }
 
     @Override
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUserName(name).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOTFOUND));
+        UserResponse userResponse = UserResponse.toUserResponse(user);
+        return userResponse;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                               .stream()
@@ -43,6 +59,7 @@ public class UserService implements IUserService {
                                       user.getUserName(),
                                       user.getEmail(),
                                       user.getPhoneNumber(),
+                                      user.getRoleId(),
                                       user.getCreatedAt(),
                                       user.getUpdatedAt()
                               ))
@@ -50,33 +67,40 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUserName(request.getUserName())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User newUser = new User();
         newUser.setUserName(request.getUserName());
-        newUser.setPassword(request.getPassword());
+
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
         newUser.setEmail(request.getEmail());
         newUser.setPhoneNumber(request.getPhoneNumber());
-        return userRepository.save(newUser);
+
+        Role role = roleRepository.findById(1L).orElseThrow(() ->
+                new AppException(ErrorCode.ROLE_NOTFOUND));
+        newUser.setRoleId(role);
+
+        userRepository.save(newUser);
+
+        UserResponse userResponse = UserResponse.toUserResponse(newUser);
+        return userResponse;
     }
 
     @Override
     public UserResponse updateUser(Long userId, UserUpdateRequest request) {
         User existingUser = userRepository.findById(userId).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOTFOUND));
-        existingUser.setPassword(request.getPassword());
+
+        existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
         existingUser.setEmail(request.getEmail());
         existingUser.setPhoneNumber(request.getPhoneNumber());
+
         userRepository.save(existingUser);
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUserId(existingUser.getUserId());
-        userResponse.setUserName(existingUser.getUserName());
-        userResponse.setEmail(existingUser.getEmail());
-        userResponse.setPhoneNumber(existingUser.getPhoneNumber());
-        userResponse.setCreatedAt(existingUser.getCreatedAt());
-        userResponse.setUpdatedAt(existingUser.getUpdatedAt());
+        UserResponse userResponse = UserResponse.toUserResponse(existingUser);
         return userResponse;
     }
 
