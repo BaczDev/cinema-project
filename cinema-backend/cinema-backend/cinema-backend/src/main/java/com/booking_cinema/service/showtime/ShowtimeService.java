@@ -11,6 +11,7 @@ import com.booking_cinema.repository.CinemaRepository;
 import com.booking_cinema.repository.MovieRepository;
 import com.booking_cinema.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class ShowtimeService implements IShowtimeService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ShowtimeResponse createShowtime(ShowtimeRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -83,6 +85,7 @@ public class ShowtimeService implements IShowtimeService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public ShowtimeResponse updateShowtime(Long showtimeId, ShowtimeRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -103,6 +106,7 @@ public class ShowtimeService implements IShowtimeService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteShowtime(Long showtimeId) {
         ShowTime existingShowtime = showtimeRepository.findById(showtimeId).orElseThrow(() ->
                 new AppException(ErrorCode.SHOWTIME_NOTFOUND));

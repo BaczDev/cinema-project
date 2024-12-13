@@ -9,6 +9,7 @@ import com.booking_cinema.model.Seat;
 import com.booking_cinema.repository.RoomRepository;
 import com.booking_cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class SeatService implements ISeatService{
     private final RoomRepository roomRepository;
 
     @Override
+    @PreAuthorize("hasRole('USER')")
     public List<SeatResponse> getSeatWithRoomId(Long roomId) {
         roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));
@@ -38,6 +40,7 @@ public class SeatService implements ISeatService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public SeatResponse updateSeat(Long seatId, SeatUpdateRequest request) {
         Room existingRoom = roomRepository.findById(request.getRoomId()).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));

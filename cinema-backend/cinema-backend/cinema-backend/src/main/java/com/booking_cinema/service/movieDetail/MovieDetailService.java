@@ -10,6 +10,7 @@ import com.booking_cinema.repository.MovieDetailRepository;
 import com.booking_cinema.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +56,7 @@ public class MovieDetailService implements IMovieDetailService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public MovieDetailResponse createMovieDetail(MovieDetailRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -76,6 +78,7 @@ public class MovieDetailService implements IMovieDetailService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public String uploadTrailer(Long movieDetailId, MultipartFile file) {
         MovieDetail existingMovieDetail = movieDetailRepository.findById(movieDetailId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_DETAIL_NOTFOUND));
@@ -143,6 +146,7 @@ public class MovieDetailService implements IMovieDetailService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public MovieDetailResponse updateMovieDetail(Long movieDetailId, MovieDetailRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -161,6 +165,7 @@ public class MovieDetailService implements IMovieDetailService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteMovieDetail(Long movieDetailId) {
         if(!movieDetailRepository.existsById(movieDetailId)){
             throw new AppException();

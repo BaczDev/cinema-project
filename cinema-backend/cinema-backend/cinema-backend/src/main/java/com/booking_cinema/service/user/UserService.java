@@ -90,6 +90,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @PostAuthorize("returnObject.userName == authentication.name")
     public UserResponse updateUser(Long userId, UserUpdateRequest request) {
         User existingUser = userRepository.findById(userId).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOTFOUND));
@@ -105,6 +106,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }

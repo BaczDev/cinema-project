@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +56,7 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public MovieResponse createMovie(MovieRequest request) {
         if(movieRepository.existsByMovieName(request.getMovieName())){
             throw new AppException(ErrorCode.MOVIE_EXISTED);
@@ -69,6 +71,7 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public String uploadPoster(Long movieId, MultipartFile file) {
         Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -135,6 +138,7 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public MovieResponse updateMovie(Long movieId, MovieRequest request) {
         Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
@@ -147,6 +151,7 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteMovie(Long movieId) {
         movieRepository.findById(movieId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));

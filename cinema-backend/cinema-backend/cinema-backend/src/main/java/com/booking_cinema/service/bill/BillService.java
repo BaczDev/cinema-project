@@ -12,6 +12,7 @@ import com.booking_cinema.repository.BookingRepository;
 import com.booking_cinema.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class BillService implements IBillService{
     private final BookingRepository bookingRepository;
     @Override
     @Transactional
+    @PreAuthorize("hasRole('USER')")
     public BillResponse createBill(BillRequest request) {
         User existingUser = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOTFOUND));

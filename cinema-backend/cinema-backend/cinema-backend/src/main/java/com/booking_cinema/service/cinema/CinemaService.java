@@ -7,6 +7,7 @@ import com.booking_cinema.exception.ErrorCode;
 import com.booking_cinema.model.Cinema;
 import com.booking_cinema.repository.CinemaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class CinemaService implements ICinemaService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public CinemaResponse createCinema(CinemaRequest request) {
         if(cinemaRepository.existsByCinemaName(request.getCinemaName())){
             throw new AppException(ErrorCode.CINEMA_EXISTED);
@@ -51,6 +53,7 @@ public class CinemaService implements ICinemaService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public CinemaResponse updateCinema(Long cinemaId, CinemaRequest request) {
         Cinema existingCinema = cinemaRepository.findById(cinemaId).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
@@ -63,6 +66,7 @@ public class CinemaService implements ICinemaService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCinema(Long cinemaId) {
         cinemaRepository.findById(cinemaId).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));

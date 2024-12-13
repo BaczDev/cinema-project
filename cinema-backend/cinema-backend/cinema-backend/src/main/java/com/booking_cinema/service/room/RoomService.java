@@ -11,6 +11,7 @@ import com.booking_cinema.repository.CinemaRepository;
 import com.booking_cinema.repository.RoomRepository;
 import com.booking_cinema.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class RoomService implements IRoomService{
     private final CinemaRepository cinemaRepository;
     private final SeatRepository seatRepository;
     @Override
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public RoomResponse getRoom(Long roomId) {
         Room existingRoom = roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));
@@ -31,6 +33,7 @@ public class RoomService implements IRoomService{
     }
 
     @Override
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public List<RoomResponse> getRoomWithCinemaId(Long cinemaId) {
         cinemaRepository.findById(cinemaId).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
@@ -47,6 +50,7 @@ public class RoomService implements IRoomService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomResponse createRoom(RoomRequest request, int rows, int cols) {
         Cinema existingCinema = cinemaRepository.findById(request.getCinemaId()).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
@@ -81,6 +85,7 @@ public class RoomService implements IRoomService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomResponse updateRoom(Long roomId, RoomRequest request) {
         Room existingRoom = roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));
@@ -94,6 +99,7 @@ public class RoomService implements IRoomService{
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteRoom(Long roomId) {
         roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));

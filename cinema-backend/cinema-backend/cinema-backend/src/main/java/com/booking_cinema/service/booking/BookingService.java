@@ -8,6 +8,8 @@ import com.booking_cinema.model.*;
 import com.booking_cinema.model.Seat;
 import com.booking_cinema.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class BookingService implements IBookingService{
     private final ShowtimeRepository showtimeRepository;
 
     @Override
+    @PreAuthorize("hasRole('USER')")
     public List<BookingResponse> createBooking(BookingRequest request) {
         User existingUser = userRepository.findById(request.getUserId()).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOTFOUND));
@@ -33,6 +36,16 @@ public class BookingService implements IBookingService{
                 new AppException(ErrorCode.SHOWTIME_NOTFOUND));
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
+
+        // **Kiểm tra xem lịch chiếu có thuộc về phim không**
+        if (!existingShowtime.getMovieId().equals(existingMovie)) {
+            throw new AppException(ErrorCode.SHOWTIME_NOT_MATCH_MOVIE);
+        }
+
+        // **Kiểm tra xem lịch chiếu có thuộc về rạp không**
+        if (!existingShowtime.getCinemaId().equals(existingCinema)) {
+            throw new AppException(ErrorCode.SHOWTIME_NOT_MATCH_CINEMA);
+        }
 
         List<Seat> seats = seatRepository.findAllById(request.getSeatId());
         if (seats.size() != request.getSeatId().size()) {
@@ -69,6 +82,7 @@ public class BookingService implements IBookingService{
     }
 
     @Override
+    @PreAuthorize("hasRole('USER')")
     public List<BookingResponse> getBookingWithUserId(Long userId) {
         userRepository.findById(userId).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOTFOUND));
