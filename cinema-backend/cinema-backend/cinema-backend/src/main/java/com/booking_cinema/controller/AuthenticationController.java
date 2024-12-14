@@ -3,6 +3,7 @@ package com.booking_cinema.controller;
 import com.booking_cinema.dto.request.auth.AuthenticationRequest;
 import com.booking_cinema.dto.request.auth.IntrospectRequest;
 import com.booking_cinema.dto.request.auth.LogoutRequest;
+import com.booking_cinema.dto.request.auth.RefreshRequest;
 import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.auth.AuthenticationResponse;
 import com.booking_cinema.dto.response.auth.IntrospectResponse;
@@ -46,12 +47,24 @@ public class AuthenticationController {
     }
 
     @PostMapping("/log-out")
-    public ApiResponse<Void> logOut(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+    public ApiResponse<Void> logOut(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
         iAuthenticationService.logout(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .errorCode(0)
                 .errorMessage("")
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request)
+            throws ParseException, JOSEException {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iAuthenticationService.refreshToken(request))
                 .build();
     }
 }

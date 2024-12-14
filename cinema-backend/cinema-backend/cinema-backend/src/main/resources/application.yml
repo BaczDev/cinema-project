@@ -23,3 +23,5 @@ spring:
 
 jwt:
   secretKey: KJfhrflyl7DKpWYDch8WBiaNMvyuy1uXcrZkmLJfOO6X7yW8DJegUouy35tHN6dw
+  valid-duration: 900 # in seconds
+  refreshable-duration: 86400 # in seconds

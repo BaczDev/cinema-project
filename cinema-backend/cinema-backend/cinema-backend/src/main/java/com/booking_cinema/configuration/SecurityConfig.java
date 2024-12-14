@@ -28,7 +28,8 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
 
     private String[] PUBLIC_ENDPOINT_POST = {"/api/v1/users/register", "/api/v1/auth/log-in",
-                                                "/api/v1/auth/introspect", "/api/v1/auth/log-out"};
+                                                "/api/v1/auth/introspect", "/api/v1/auth/log-out",
+                                                "/api/v1/auth/refresh"};
     private String[] PUBLIC_ENDPOINT_GET = {"/api/v1/cinema","/api/v1/cinema/**",
                                             "/api/v1/movie", "/api/v1/movie/**",
                                             "/api/v1/movieDetail/movie/**", "/api/v1/movieDetail",
