@@ -1,5 +1,6 @@
 package com.booking_cinema.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +24,11 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private String[] PUBLIC_ENDPOINT_POST = {"/api/v1/users/register", "/api/v1/auth/log-in","/api/v1/auth/introspect"};
+    private String[] PUBLIC_ENDPOINT_POST = {"/api/v1/users/register", "/api/v1/auth/log-in",
+                                                "/api/v1/auth/introspect", "/api/v1/auth/log-out"};
     private String[] PUBLIC_ENDPOINT_GET = {"/api/v1/cinema","/api/v1/cinema/**",
                                             "/api/v1/movie", "/api/v1/movie/**",
                                             "/api/v1/movieDetail/movie/**", "/api/v1/movieDetail",
@@ -33,19 +36,17 @@ public class SecurityConfig {
 
     };
 
-    @Value("${jwt.secretKey}")
-    private String secretKey;
+    private final CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT_POST).permitAll()
                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINT_GET).permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
@@ -65,15 +66,6 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
         return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HS512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
     }
 
     @Bean

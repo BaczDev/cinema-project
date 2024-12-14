@@ -2,11 +2,14 @@ package com.booking_cinema.service.auth;
 
 import com.booking_cinema.dto.request.auth.AuthenticationRequest;
 import com.booking_cinema.dto.request.auth.IntrospectRequest;
+import com.booking_cinema.dto.request.auth.LogoutRequest;
 import com.booking_cinema.dto.response.auth.AuthenticationResponse;
 import com.booking_cinema.dto.response.auth.IntrospectResponse;
 import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
+import com.booking_cinema.model.InvalidatedToken;
 import com.booking_cinema.model.User;
+import com.booking_cinema.repository.InvalidatedTokenRepository;
 import com.booking_cinema.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -24,11 +27,13 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService implements IAuthenticationService{
     private final UserRepository userRepository;
+    private final InvalidatedTokenRepository invalidatedTokenRepository;
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -54,6 +59,7 @@ public class AuthenticationService implements IAuthenticationService{
                 .issuer("bacz")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -74,30 +80,58 @@ public class AuthenticationService implements IAuthenticationService{
         }
         return ""; // Trả về chuỗi rỗng nếu người dùng không có vai trò
     }
-
+    //============================================================================================
     @Override
-    public IntrospectResponse introspect(IntrospectRequest request) {
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
+        boolean isValid = true;
         try {
-            //xác minh chữ kí 'secretKey' có đúng hay không
-            JWSVerifier verifier = new MACVerifier(secretKey.getBytes());
-
-            //phân tách token để lấy chữ kí
-            SignedJWT signedJWT = SignedJWT.parse(token);
-
-            //ktra tgian hết hạn của token
-            Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-            //xác minh chữ kí(so sánh chữ kí trong token với secretKey có khớp hay không)
-            var verified = signedJWT.verify(verifier);
-
-            return IntrospectResponse.builder()
-                    .valid(verified && expiryTime.after(new Date()))
-                    .build();
-        } catch (JOSEException | ParseException e) {
-            throw new RuntimeException(e);
+            verifyToken(token);
+        }catch (AppException e){
+            isValid = false;
         }
+        return IntrospectResponse.builder()
+                .valid(isValid)
+                .build();
+
     }
 
+    @Override
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signToken = verifyToken(request.getToken());
+
+        String jti = signToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        //xác minh chữ kí 'secretKey' có đúng hay không
+        JWSVerifier verifier = new MACVerifier(secretKey.getBytes());
+
+        //phân tách token để lấy chữ kí
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        //ktra tgian hết hạn của token
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        //xác minh chữ kí(so sánh chữ kí trong token với secretKey có khớp hay không)
+        var verified = signedJWT.verify(verifier);
+
+        if(!verified && expiryTime.after(new Date())){
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())){
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        return signedJWT;
+    }
 
 }
