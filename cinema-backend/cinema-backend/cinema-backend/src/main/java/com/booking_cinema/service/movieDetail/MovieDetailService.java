@@ -40,7 +40,10 @@ public class MovieDetailService implements IMovieDetailService{
                            movieDetail.getMovieGenre(),
                            movieDetail.getReleaseDate(),
                            movieDetail.getMovieLanguage(),
-                           movieDetail.getMovieId().getMovieId()
+                           movieDetail.getMovieId().getMovieId(),
+                           movieDetail.getDirector(),
+                           movieDetail.getCast(),
+                           movieDetail.getRated()
                    ))
                    .toList();
     }
@@ -71,6 +74,9 @@ public class MovieDetailService implements IMovieDetailService{
         newMovieDetail.setReleaseDate(request.getReleaseDate());
         newMovieDetail.setMovieLanguage(request.getMovieLanguage());
         newMovieDetail.setMovieId(existingMovie);
+        newMovieDetail.setDirector(request.getDirector());
+        newMovieDetail.setCast(request.getCast());
+        newMovieDetail.setRated(request.getRated());
         movieDetailRepository.save(newMovieDetail);
 
         MovieDetailResponse movieDetailResponse = MovieDetailResponse.toMovieDetailResponse(newMovieDetail);
@@ -158,6 +164,9 @@ public class MovieDetailService implements IMovieDetailService{
         existingMovieDetail.setReleaseDate(request.getReleaseDate());
         existingMovieDetail.setMovieLanguage(request.getMovieLanguage());
         existingMovieDetail.setMovieId(existingMovie);
+        existingMovieDetail.setDirector(request.getDirector());
+        existingMovieDetail.setCast(request.getCast());
+        existingMovieDetail.setRated(request.getRated());
         movieDetailRepository.save(existingMovieDetail);
 
         MovieDetailResponse movieDetailResponse = MovieDetailResponse.toMovieDetailResponse(existingMovieDetail);

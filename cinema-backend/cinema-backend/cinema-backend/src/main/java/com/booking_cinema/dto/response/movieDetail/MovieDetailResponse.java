@@ -21,6 +21,11 @@ public class MovieDetailResponse {
     private LocalDate releaseDate;
     private String movieLanguage;
     private Long movieId;
+    private String director;
+
+    private String cast;
+
+    private String rated;
 
     public static MovieDetailResponse toMovieDetailResponse(MovieDetail movieDetail){
         return MovieDetailResponse.builder()
@@ -31,6 +36,9 @@ public class MovieDetailResponse {
                 .releaseDate(movieDetail.getReleaseDate())
                 .movieLanguage(movieDetail.getMovieLanguage())
                 .movieId(movieDetail.getMovieId().getMovieId())
+                .director(movieDetail.getDirector())
+                .cast(movieDetail.getCast())
+                .rated(movieDetail.getRated())
                 .build();
     }
 }

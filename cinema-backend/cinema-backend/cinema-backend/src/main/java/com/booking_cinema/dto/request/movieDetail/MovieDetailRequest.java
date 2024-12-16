@@ -30,4 +30,10 @@ public class MovieDetailRequest {
 
     @NotNull(message = "MOVIE_ID_NOTNULL")
     private Long movieId;
+
+    private String director;
+
+    private String cast;
+
+    private String rated;
 }

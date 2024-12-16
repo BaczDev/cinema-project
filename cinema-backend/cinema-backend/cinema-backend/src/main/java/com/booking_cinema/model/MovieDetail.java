@@ -33,6 +33,15 @@ public class MovieDetail {
     @Column(name = "movie_language")
     private String movieLanguage;
 
+    @Column(name = "director")
+    private String director;
+
+    @Column(name = "cast")
+    private String cast;
+
+    @Column(name = "rated")
+    private String rated;
+
     @ManyToOne
     @JoinColumn(name = "movie_id")
     private Movie movieId;
