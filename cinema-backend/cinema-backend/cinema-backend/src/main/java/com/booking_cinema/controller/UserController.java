@@ -1,6 +1,7 @@
 package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.user.UserCreationRequest;
+import com.booking_cinema.dto.request.user.UserUpdateByAdminRequest;
 import com.booking_cinema.dto.request.user.UserUpdateRequest;
 import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.user.UserResponse;
@@ -66,6 +67,17 @@ public class UserController {
                 .errorCode(0)
                 .errorMessage("")
                 .data(iUserService.updateUser(userId, request))
+                .build();
+    }
+
+    @PutMapping("/update-by-admin/{userId}")
+    public ApiResponse<UserResponse> updateUserByAdmin(@PathVariable Long userId,
+                                                       @RequestBody @Valid UserUpdateByAdminRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iUserService.updateUserByAdmin(userId, request))
                 .build();
     }
 

@@ -1,6 +1,7 @@
 package com.booking_cinema.service.user;
 
 import com.booking_cinema.dto.request.user.UserCreationRequest;
+import com.booking_cinema.dto.request.user.UserUpdateByAdminRequest;
 import com.booking_cinema.dto.request.user.UserUpdateRequest;
 import com.booking_cinema.dto.response.user.UserResponse;
 import com.booking_cinema.exception.AppException;
@@ -101,6 +102,29 @@ public class UserService implements IUserService {
         existingUser.setPhoneNumber(request.getPhoneNumber());
 
         userRepository.save(existingUser);
+        UserResponse userResponse = UserResponse.toUserResponse(existingUser);
+        return userResponse;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse updateUserByAdmin(Long userId, UserUpdateByAdminRequest request) {
+        User existingUser = userRepository.findById(userId).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOTFOUND));
+
+        existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        existingUser.setEmail(request.getEmail());
+
+        existingUser.setPhoneNumber(request.getPhoneNumber());
+
+        Role role = roleRepository.findById(request.getRoleId()).orElseThrow(() ->
+                new AppException(ErrorCode.ROLE_NOTFOUND));
+
+        existingUser.setRoleId(role);
+
+        userRepository.save(existingUser);
+
         UserResponse userResponse = UserResponse.toUserResponse(existingUser);
         return userResponse;
     }
