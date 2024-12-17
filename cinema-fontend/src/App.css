@@ -1,0 +1,15 @@
+/* Đảm bảo toàn bộ trang sử dụng flexbox */
+body, html {
+  height: 100%; /* Đảm bảo chiều cao toàn bộ trang */
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Đặt các phần tử chính theo chiều dọc */
+}
+
+.main-content {
+  flex: 1; /* Phần nội dung chiếm không gian còn lại */
+}
+
+footer {
+  margin-top: auto; /* Đảm bảo footer luôn được đẩy xuống dưới cùng */
+}
