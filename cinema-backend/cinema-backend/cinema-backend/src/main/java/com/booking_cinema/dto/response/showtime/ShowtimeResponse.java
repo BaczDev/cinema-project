@@ -21,6 +21,7 @@ public class ShowtimeResponse {
     private String endTime;
     private Long movieId;
     private Long cinemaId;
+    private Long roomId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,6 +33,7 @@ public class ShowtimeResponse {
                 .endTime(showTime.getEndTime())
                 .movieId(showTime.getMovieId().getMovieId())
                 .cinemaId(showTime.getCinemaId().getCinemaId())
+                .roomId(showTime.getRoomId().getRoomId())
                 .createdAt(showTime.getCreatedAt())
                 .updatedAt(showTime.getUpdatedAt())
                 .build();

@@ -6,9 +6,11 @@ import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
 import com.booking_cinema.model.Cinema;
 import com.booking_cinema.model.Movie;
+import com.booking_cinema.model.Room;
 import com.booking_cinema.model.ShowTime;
 import com.booking_cinema.repository.CinemaRepository;
 import com.booking_cinema.repository.MovieRepository;
+import com.booking_cinema.repository.RoomRepository;
 import com.booking_cinema.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +24,8 @@ public class ShowtimeService implements IShowtimeService{
     private final ShowtimeRepository showtimeRepository;
     private final CinemaRepository cinemaRepository;
     private final MovieRepository movieRepository;
+
+    private final RoomRepository roomRepository;
     @Override
     public List<ShowtimeResponse> getShowtimeWithMovieId(Long movieId) {
         if (movieRepository.findById(movieId).isEmpty()){
@@ -36,6 +40,7 @@ public class ShowtimeService implements IShowtimeService{
                                 showTime.getEndTime(),
                                 showTime.getMovieId().getMovieId(),
                                 showTime.getCinemaId().getCinemaId(),
+                                showTime.getRoomId().getRoomId(),
                                 showTime.getCreatedAt(),
                                 showTime.getUpdatedAt()
                         ))
@@ -56,6 +61,7 @@ public class ShowtimeService implements IShowtimeService{
                                 showTime.getEndTime(),
                                 showTime.getMovieId().getMovieId(),
                                 showTime.getCinemaId().getCinemaId(),
+                                showTime.getRoomId().getRoomId(),
                                 showTime.getCreatedAt(),
                                 showTime.getUpdatedAt()
                         ))
@@ -69,15 +75,28 @@ public class ShowtimeService implements IShowtimeService{
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
         Cinema exitingCinema = cinemaRepository.findById(request.getCinemaId()).orElseThrow(() ->
                 new AppException(ErrorCode.CINEMA_NOTFOUND));
-        if(showtimeRepository.existsByShowDateAndCinemaId_CinemaIdAndMovieId_MovieId(request.getShowDate(), request.getCinemaId(), request.getMovieId())){
-            throw new AppException(ErrorCode.SHOWTIME_EXISTED);
+        Room existingRoom = roomRepository.findById(request.getRoomId()).orElseThrow(() ->
+                new AppException(ErrorCode.ROOM_NOTFOUND));
+
+        if(!existingRoom.getCinemaId().getCinemaId().equals(request.getCinemaId())){
+            throw new AppException(ErrorCode.ROOM_NOT_IN_CINEMA);
         }
+
+        if(showtimeRepository.existsByShowDateAndRoomId_RoomIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
+                request.getShowDate(), request.getRoomId(), request.getStartTime(), request.getEndTime()
+        )){
+            throw new AppException(ErrorCode.SHOWTIME_CONFLICT);
+        }
+
+
+
         ShowTime newShowtime = new ShowTime();
         newShowtime.setShowDate(request.getShowDate());
         newShowtime.setStartTime(request.getStartTime());
         newShowtime.setEndTime(request.getEndTime());
         newShowtime.setMovieId(existingMovie);
         newShowtime.setCinemaId(exitingCinema);
+        newShowtime.setRoomId(existingRoom);
         showtimeRepository.save(newShowtime);
 
         ShowtimeResponse response = ShowtimeResponse.toShowtimeResponse(newShowtime);
@@ -94,11 +113,15 @@ public class ShowtimeService implements IShowtimeService{
         ShowTime existingShowtime = showtimeRepository.findById(showtimeId).orElseThrow(() ->
                 new AppException(ErrorCode.SHOWTIME_NOTFOUND));
 
+        Room existingRoom = roomRepository.findById(request.getRoomId()).orElseThrow(() ->
+                new AppException(ErrorCode.ROOM_NOTFOUND));
+
         existingShowtime.setShowDate(request.getShowDate());
         existingShowtime.setStartTime(request.getStartTime());
         existingShowtime.setEndTime(request.getEndTime());
         existingShowtime.setMovieId(existingMovie);
         existingShowtime.setCinemaId(exitingCinema);
+        existingShowtime.setRoomId(existingRoom);
         showtimeRepository.save(existingShowtime);
 
         ShowtimeResponse response = ShowtimeResponse.toShowtimeResponse(existingShowtime);

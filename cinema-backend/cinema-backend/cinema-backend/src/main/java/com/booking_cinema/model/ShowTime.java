@@ -36,4 +36,8 @@ public class ShowTime extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "cinema_id")
     private Cinema cinemaId;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room roomId;
 }

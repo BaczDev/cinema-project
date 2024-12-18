@@ -28,4 +28,6 @@ public class ShowtimeRequest {
 
     @NotNull(message = "CINEMA_ID_NOTNULL")
     private Long cinemaId;
+
+    private Long roomId;
 }

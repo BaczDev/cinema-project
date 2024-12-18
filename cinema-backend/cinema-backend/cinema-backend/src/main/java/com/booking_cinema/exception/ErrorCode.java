@@ -61,6 +61,8 @@ public enum ErrorCode {
     START_TIME_NOTNULL(703, "start time not null", HttpStatus.BAD_REQUEST),
     END_TIME_NOTNULL(704, "end time not null", HttpStatus.BAD_REQUEST),
     MOVIE_ID_NOTNULL(705, "movie id not null", HttpStatus.BAD_REQUEST),
+    ROOM_NOT_IN_CINEMA(706, "room not in cinema", HttpStatus.NOT_FOUND),
+    SHOWTIME_CONFLICT(707, "duplicate showtime", HttpStatus.BAD_REQUEST),
 
     //movie detail
     MOVIE_DETAIL_NOTFOUND(800, "movie detail not found", HttpStatus.NOT_FOUND),
