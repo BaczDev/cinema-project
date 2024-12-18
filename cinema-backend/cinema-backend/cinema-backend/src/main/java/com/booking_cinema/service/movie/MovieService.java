@@ -6,6 +6,7 @@ import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
 import com.booking_cinema.model.Movie;
 import com.booking_cinema.repository.MovieRepository;
+import com.booking_cinema.service.cloudinary.ICloudinaryUpload;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ import java.util.UUID;
 @Slf4j
 public class MovieService implements IMovieService{
     private final MovieRepository movieRepository;
+
+    private final ICloudinaryUpload iCloudinaryUpload;
     @Override
     public MovieResponse getMovie(Long movieId) {
         Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() ->
@@ -90,51 +93,17 @@ public class MovieService implements IMovieService{
                 throw new AppException(ErrorCode.INVALID_FILE_FORMAT);
             }
 
-            // Lưu file vào thư mục "uploads"
-            String fileName = storeFile(file);
+            // Sử dụng dịch vụ upload file lên Cloudinary
+            String fileUrl = iCloudinaryUpload.upload(file);
 
             // Cập nhật thông tin poster của phim trong database
-            existingMovie.setMoviePosterUrl(fileName);
+            existingMovie.setMoviePosterUrl(fileUrl);
             movieRepository.save(existingMovie);
-            return fileName;
+            return fileUrl;
         }catch (IOException e){
             throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
         }
 
-    }
-
-    // Phương thức lưu file
-    private String storeFile(MultipartFile file) throws IOException {
-        // Kiểm tra định dạng file
-        if (!isImageFile(file) || file.getOriginalFilename() == null) {
-            throw new AppException(ErrorCode.INVALID_FILE_FORMAT);
-        }
-
-        // Lấy tên file gốc và tạo tên file duy nhất
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-
-        //Đường dẫn đến thư mục mà bạn muốn lưu file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
-
-        // Tạo thư mục nếu chưa tồn tại
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-
-        // Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = uploadDir.resolve(uniqueFileName);
-
-        // Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-        return uniqueFileName;
-    }
-
-    // Kiểm tra file có phải là hình ảnh hay không
-    private boolean isImageFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image/");
     }
 
     @Override

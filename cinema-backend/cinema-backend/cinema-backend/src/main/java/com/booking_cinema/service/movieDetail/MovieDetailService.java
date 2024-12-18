@@ -8,6 +8,7 @@ import com.booking_cinema.model.Movie;
 import com.booking_cinema.model.MovieDetail;
 import com.booking_cinema.repository.MovieDetailRepository;
 import com.booking_cinema.repository.MovieRepository;
+import com.booking_cinema.service.cloudinary.ICloudinaryUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,8 @@ import java.util.UUID;
 public class MovieDetailService implements IMovieDetailService{
     private final MovieDetailRepository movieDetailRepository;
     private final MovieRepository movieRepository;
+
+    private final ICloudinaryUpload iCloudinaryUpload;
     @Override
     public List<MovieDetailResponse> getAllMovieDetail() {
         List<MovieDetail> list = movieDetailRepository.findAll();
@@ -101,55 +104,23 @@ public class MovieDetailService implements IMovieDetailService{
 
             //check dinh dang file
             String contentType = file.getContentType();
-            if (contentType == null || !isVideoFile(file)){
+            if (contentType == null || !contentType.startsWith("video/")){
                 throw new AppException(ErrorCode.INVALID_VIDEO_FORMAT);
             }
 
             //luu file
-            String fileName = storeTrailerFile(file);
+            String fileUrl = iCloudinaryUpload.upload(file);
 
-            existingMovieDetail.setMovieTrailer(fileName);
+            existingMovieDetail.setMovieTrailer(fileUrl);
             movieDetailRepository.save(existingMovieDetail);
 
-            return fileName;
+            return fileUrl;
         }catch (IOException e){
             throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 
-    private String storeTrailerFile(MultipartFile file) throws IOException {
-        //check dinh dang file
-        if (!isVideoFile(file) || file.getOriginalFilename() == null){
-            throw new AppException(ErrorCode.INVALID_VIDEO_FORMAT);
-        }
 
-        //tao ten file duy nhat
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-
-        // Đường dẫn đến thư mục "trailers"
-        java.nio.file.Path uploadDir = Paths.get("trailers");
-
-        // Tạo thư mục nếu chưa tồn tại
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-
-        // Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = uploadDir.resolve(uniqueFileName);
-
-        // Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-        return uniqueFileName;
-
-    }
-
-    // Kiểm tra file có phải là video hay không
-    private boolean isVideoFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("video/");
-    }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
