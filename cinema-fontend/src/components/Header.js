@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Thêm useLocation
-import { useAuth } from '../context/AuthContext'; // Import useAuth hook
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { logoutApi } from "../service/authService";
 
 const Header = () => {
-  const { isLoggedIn, logout } = useAuth(); // Lấy trạng thái đăng nhập và hàm logout từ context
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State điều khiển mở/đóng menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State điều khiển mở/đóng menu
   const menuRef = useRef(null); // Reference để kiểm tra click ngoài menu
   const avatarRef = useRef(null); // Reference để kiểm tra click ngoài avatar
   const navigate = useNavigate(); // Hook để điều hướng
   const location = useLocation(); // Hook để lấy thông tin URL hiện tại
 
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen); // Hàm toggle menu
+  const token = localStorage.getItem("token");
 
-  const handleLogout = () => {
-    logout(); // Gọi hàm logout từ AuthContext
-    navigate('/'); // Chuyển hướng về trang Home
-    setIsMenuOpen(false); // Đóng menu khi logout
-  };
 
-  const handleProfileClick = () => {
-    setIsMenuOpen(false); // Đóng menu khi người dùng click vào thông tin cá nhân
+
+  const handleLogout = async () => {
+    let res = await logoutApi(token);
+      localStorage.removeItem("token");
+    navigate("/"); 
+    setIsMenuOpen(false); 
   };
 
   // Thêm event listener để đóng menu khi click ra ngoài
@@ -35,19 +36,30 @@ const Header = () => {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
   // Ẩn menu khi chuyển sang trang đăng ký, đăng nhập, hoặc trang cá nhân
   useEffect(() => {
-    if (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/profile') {
-      setIsMenuOpen(false); // Đóng menu nếu đang ở trang đăng ký, đăng nhập hoặc cá nhân
-    }
-  }, [location]); // Mỗi khi URL thay đổi, kiểm tra
+    const token = localStorage.getItem("token");
+  setIsLoggedIn(!!token); // Cập nhật trạng thái khi component mount
+
+  const handleStorageChange = () => {
+    const updatedToken = localStorage.getItem("token");
+    setIsLoggedIn(!!updatedToken); // Đồng bộ trạng thái khi localStorage thay đổi
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+
+    
+  }, [location]);
 
   return (
     <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
@@ -82,7 +94,6 @@ const Header = () => {
               >
                 <Link
                   to="/profile"
-                  onClick={handleProfileClick} // Gọi hàm đóng menu khi click vào trang cá nhân
                   className="block px-4 py-2 hover:bg-gray-700 rounded-md"
                 >
                   Thông tin cá nhân
@@ -101,22 +112,12 @@ const Header = () => {
 
       {/* Menu di động với hamburger */}
       <div className="md:hidden flex items-center">
-        {!isLoggedIn ? (
-          <button
-            onClick={toggleMenu}
-            className="text-white text-3xl focus:outline-none"
-          >
-            &#9776; {/* Hamburger icon */}
-          </button>
-        ) : (
-          <div
-            ref={avatarRef}
-            onClick={toggleMenu}
-            className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white cursor-pointer ml-4"
-          >
-            A {/* Avatar giả lập */}
-          </div>
-        )}
+        <button
+          onClick={toggleMenu}
+          className="text-white text-3xl focus:outline-none"
+        >
+          &#9776; {/* Hamburger icon */}
+        </button>
 
         {/* Menu */}
         {isMenuOpen && (
@@ -143,7 +144,6 @@ const Header = () => {
               <>
                 <Link
                   to="/profile"
-                  onClick={handleProfileClick} // Gọi hàm đóng menu khi click vào trang cá nhân
                   className="block px-4 py-2 hover:bg-gray-700 rounded-md"
                 >
                   Thông tin cá nhân

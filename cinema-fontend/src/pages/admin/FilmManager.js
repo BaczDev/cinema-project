@@ -1,61 +1,114 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import {
+  getMovies,
+  deleteMovie,
+  addShowtime,
+} from "../../service/movieService";
+import { getCinemas, getRooms } from "../../service/cinemaService";
 
 const FilmManager = ({ setSelectedFilm, setSelectedMenu }) => {
-  const [films, setFilms] = useState([
-    { 
-      id: 1, 
-      title: 'Avengers: Endgame', 
-      duration: '180 phút',
-      image: 'https://example.com/avengers.jpg',
-    },
-    { 
-      id: 2, 
-      title: 'Inception', 
-      duration: '148 phút',
-      image: 'https://example.com/inception.jpg',
-    },
-    { 
-      id: 3, 
-      title: 'Interstellar', 
-      duration: '169 phút',
-      image: 'https://example.com/interstellar.jpg',
-    },
-  ]);
-
+  const [films, setFilms] = useState([]);
   const [showAddSessionForm, setShowAddSessionForm] = useState(false);
   const [newSession, setNewSession] = useState({
-    date: '',
-    startTime: '',
-    endTime: '',
-    cinema: '',
+    showDate: "",
+    startTime: "",
+    endTime: "",
+    cinema: "",
+    room: "", // Thêm trường phòng chiếu
   });
 
-  const cinemas = ['Cineplex', 'Galaxy', 'BHD', 'Lotte Cinema']; // Danh sách các rạp
+  const [cinemas, setCinemas] = useState([]); // Danh sách các rạp
+  const [rooms, setRooms] = useState([]); // Danh sách phòng chiếu
 
-  const deleteFilm = (id) => {
-    setFilms(films.filter((film) => film.id !== id));
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    getListMovies();
+    getListCinemas();
+  }, []);
+  //=======================================================================================================
+  //lay danh sach phim
+  const getListMovies = async () => {
+    try {
+      const res = await getMovies();
+      if (res.data && res.data.data) {
+        setFilms(res.data.data);
+      }
+    } catch (error) {}
+  };
+
+  //=======================================================================================================
+  //lay danh sach rap
+  const getListCinemas = async () => {
+    try {
+      const res = await getCinemas();
+      if (res.data && res.data.data) {
+        setCinemas(res.data.data);
+      }
+    } catch (error) {
+      console.log("Lỗi khi lấy danh sách rạp", error);
+    }
+  };
+
+  // Lấy danh sách phòng khi người dùng chọn rạp
+  const handleCinemaChange = async (cinemaId) => {
+    try {
+      const res = await getRooms(token, cinemaId);
+      console.log(res.data.data);
+      if (res.data && res.data.data) {
+        setRooms(res.data.data);
+      }
+    } catch (error) {
+      console.log("Lỗi khi lấy danh sách phòng", error);
+    }
+  };
+
+  // Thêm suất chiếu
+  const handleSubmitSession = async (e) => {
+    e.preventDefault();
+    try {
+      const { showDate, startTime, endTime, cinema, room, movieId } = newSession;
+      console.log(newSession);
+      
+      const res = await addShowtime(token, showDate, startTime, endTime, movieId, cinema, room);
+      
+      if (res.status === 200) {
+        alert('Suất chiếu đã được thêm!');
+        setShowAddSessionForm(false); // Đóng form sau khi thêm suất chiếu
+      }
+    } catch (error) {
+      console.log("Lỗi khi thêm suất chiếu", error);
+      alert('Đã có lỗi xảy ra khi thêm suất chiếu');
+    }
+  };
+
+
+  //=======================================================================================================
+  const deleteFilm = async (movieId) => {
+    const res = await deleteMovie(token, movieId);
+    if (res.status === 200) {
+      alert("Xóa thành công");
+      getListMovies();
+    }
   };
 
   const handleEditClick = (film) => {
     setSelectedFilm(film); // Lưu thông tin phim đang sửa
-    setSelectedMenu('edit-film'); // Chuyển đến màn hình sửa phim
+    setSelectedMenu("edit-film"); // Chuyển đến màn hình sửa phim
   };
 
   const handleAddSessionClick = (film) => {
     setShowAddSessionForm(true); // Hiện form thêm suất chiếu
+  setNewSession((prevState) => ({
+    ...prevState,
+    movieId: film.movieId, // Lưu movieId vào state
+  }));
+  console.log(film.movieId);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewSession((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmitSession = (e) => {
-    e.preventDefault();
-    console.log('Thông tin suất chiếu:', newSession);
-    // Bạn có thể lưu thông tin suất chiếu vào cơ sở dữ liệu hoặc thực hiện các thao tác khác ở đây.
-    alert('Suất chiếu đã được thêm!');
-    setShowAddSessionForm(false); // Đóng form sau khi thêm suất chiếu
   };
 
   return (
@@ -74,20 +127,26 @@ const FilmManager = ({ setSelectedFilm, setSelectedMenu }) => {
         <tbody>
           {films.map((film) => (
             <tr key={film.id} className="text-center hover:bg-gray-100">
-              <td className="border border-gray-300 px-4 py-2">{film.id}</td>
-              <td className="border border-gray-300 px-4 py-2">{film.title}</td>
-              <td className="border border-gray-300 px-4 py-2">{film.duration}</td>
               <td className="border border-gray-300 px-4 py-2">
-                <img 
-                  src={film.image} 
-                  alt={film.title} 
-                  className="w-20 h-20 object-cover rounded" 
+                {film.movieId}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {film.movieName}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {film.movieLength} Phút
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                <img
+                  src={film.moviePosterUrl}
+                  alt={film.title}
+                  className="w-20 h-20 object-cover rounded"
                 />
               </td>
               <td className="border border-gray-300 px-4 py-2">
                 <button
                   className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2"
-                  onClick={() => deleteFilm(film.id)}
+                  onClick={() => deleteFilm(film.movieId)}
                 >
                   Xóa
                 </button>
@@ -119,8 +178,8 @@ const FilmManager = ({ setSelectedFilm, setSelectedMenu }) => {
                 <label className="block font-medium">Ngày Chiếu</label>
                 <input
                   type="date"
-                  name="date"
-                  value={newSession.date}
+                  name="showDate"
+                  value={newSession.showDate}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded-md"
                 />
@@ -151,11 +210,31 @@ const FilmManager = ({ setSelectedFilm, setSelectedMenu }) => {
                   name="cinema"
                   value={newSession.cinema}
                   onChange={handleInputChange}
+                  onBlur={(e) => handleCinemaChange(e.target.value)} // Tải phòng khi chọn rạp
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   <option value="">Chọn rạp</option>
                   {cinemas.map((cinema, index) => (
-                    <option key={index} value={cinema}>{cinema}</option>
+                    <option key={index} value={cinema.cinemaId}>
+                      {cinema.cinemaName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* Phòng chiếu */}
+              <div className="mb-4">
+                <label className="block font-medium">Chọn Phòng</label>
+                <select
+                  name="room"
+                  value={newSession.room}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">Chọn phòng</option>
+                  {rooms.map((room, index) => (
+                    <option key={index} value={room.roomId}>
+                      {room.roomName} {/* Hiển thị tên phòng */}
+                    </option>
                   ))}
                 </select>
               </div>

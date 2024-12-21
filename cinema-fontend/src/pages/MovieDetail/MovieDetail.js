@@ -49,7 +49,7 @@ const MovieDetail = () => {
               className="w-full h-auto rounded-md shadow-lg"
             />
             <button
-              onClick={() => navigate(`/booking/${id}`)}
+              onClick={() => navigate(`/cinema/${movie.id}`)}
               className="mt-4 w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
             >
               Mua vé

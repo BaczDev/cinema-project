@@ -30,7 +30,7 @@ const MovieList = () => {
               <div className="mt-4 flex justify-between">
                 <Link to={`/movie/${movie.id}`} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 text-center">Chi tiết</Link>
                 <Link 
-                  to={`/booking/${movie.id}`} 
+                  to={`/cinema/${movie.id}`} 
                   className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
                 >
                   Mua vé

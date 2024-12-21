@@ -3,6 +3,7 @@ import FilmManager from './FilmManager';
 import UserManager from './UserManager';
 import AddFilm from './AddFilm';
 import EditFilm from './EditFilm';
+import CinemaManager from './CinemaManager';
 
 const Dashboard = () => {
   const [selectedMenu, setSelectedMenu] = useState('film-manager');
@@ -18,6 +19,8 @@ const Dashboard = () => {
         return <AddFilm />;
       case 'edit-film':
         return selectedFilm ? <EditFilm film={selectedFilm} setSelectedMenu={setSelectedMenu} /> : <div>Vui lòng chọn phim để sửa.</div>;
+      case 'cinema-manager':
+        return <CinemaManager />; // Hiển thị giao diện quản lý rạp phim
       default:
         return <div>Chọn một chức năng từ menu bên trái</div>;
     }
@@ -29,6 +32,7 @@ const Dashboard = () => {
       <div className="w-1/5 bg-gray-800 text-white p-4">
         <h1 className="text-2xl font-bold mb-4">Admin Menu</h1>
         <ul>
+          {/* Quản lý phim */}
           <li
             className={`cursor-pointer py-2 px-4 ${selectedMenu === 'film-manager' ? 'bg-gray-600' : ''}`}
             onClick={() => setSelectedMenu('film-manager')}
@@ -43,11 +47,21 @@ const Dashboard = () => {
               Thêm Phim
             </li>
           </ul>
+
+          {/* Quản lý người dùng */}
           <li
             className={`cursor-pointer py-2 px-4 ${selectedMenu === 'user-manager' ? 'bg-gray-600' : ''}`}
             onClick={() => setSelectedMenu('user-manager')}
           >
             Quản lý Người Dùng
+          </li>
+
+          {/* Quản lý rạp phim */}
+          <li
+            className={`cursor-pointer py-2 px-4 ${selectedMenu === 'cinema-manager' ? 'bg-gray-600' : ''}`}
+            onClick={() => setSelectedMenu('cinema-manager')}
+          >
+            Quản lý Rạp Phim
           </li>
         </ul>
       </div>

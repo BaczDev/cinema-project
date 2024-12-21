@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { createMovie, uploadPoster } from "../../service/movieService";
+import {
+  createMovieDetail,
+  uploadTrailer,
+} from "../../service/movieDetailService";
 
 const AddFilm = () => {
   const [filmData, setFilmData] = useState({
-    title: '',
-    file: null,  // Dữ liệu tệp (ảnh hoặc video)
-    duration: '',
-    description: '',
-    trailer: '',
-    genre: '',
-    releaseDate: '',
-    language: '',
-    director: '',
-    actors: '',
-    rated: '',
+    movieName: "", // Tên phim
+    moviePosterUrl: "", // Dữ liệu tệp (ảnh hoặc video poster)
+    movieLength: "", // Thời lượng phim
+    movieDescription: "", // Mô tả phim
+    movieTrailer: "", // Tệp video trailer
+    movieGenre: "", // Thể loại phim
+    releaseDate: "", // Ngày ra mắt
+    movieLanguage: "", // Ngôn ngữ phim
+    director: "", // Đạo diễn
+    cast: "", // Diễn viên
+    rated: "", // Đánh giá phim
   });
+
+  const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,109 +40,157 @@ const AddFilm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Thêm phim mới:', filmData);
+    try {
+      // Gọi API createMovie
+      const movieResponse = await createMovie(token,
+        filmData.movieName,
+        '',
+        filmData.movieLength
+      );
 
-    // Xóa dữ liệu sau khi thêm phim
-    setFilmData({
-      title: '',
-      file: null,  // Đặt lại tệp sau khi gửi
-      duration: '',
-      description: '',
-      trailer: '',
-      genre: '',
-      releaseDate: '',
-      language: '',
-      director: '',
-      actors: '',
-      rated: '',
-    });
+      // Sau khi tạo phim, upload poster
+      const movieId = movieResponse.data.data.movieId;
+      await uploadPoster(token, movieId, filmData.moviePosterUrl);
+
+      // Gọi API createMovieDetail
+      const movieDetailResponse = await createMovieDetail(token,
+        filmData.movieDescription,
+        '',
+        filmData.movieGenre,
+        filmData.releaseDate,
+        filmData.movieLanguage,
+        movieId,
+        filmData.director,
+        filmData.cast,
+        filmData.rated
+      );
+
+      // Sau khi tạo movieDetail, upload trailer
+      const movieDetailId = movieDetailResponse.data.data.movieDetailId;
+      await uploadTrailer(token, movieDetailId, filmData.movieTrailer);
+
+      alert("Phim đã được thêm thành công!");
+      setFilmData({
+        movieName: "",
+        moviePoster: null,
+        movieLength: "",
+        movieDescription: "",
+        movieTrailer: null,
+        movieGenre: "",
+        releaseDate: "",
+        movieLanguage: "",
+        director: "",
+        cast: "",
+        rated: "",
+      });
+    } catch (error) {
+      console.error("Đã xảy ra lỗi khi thêm phim:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại!");
+    }
   };
 
   return (
     <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Thêm Phim Mới</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Tên Phim */}
         <div>
           <label className="block">Tên Phim</label>
           <input
             type="text"
-            name="title"
-            value={filmData.title}
+            name="movieName"
+            value={filmData.movieName}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Poster */}
         <div>
-          <label className="block">Ảnh/Video</label>
+          <label className="block">Poster</label>
           <input
             type="file"
-            name="file"
+            name="moviePosterUrl"
             onChange={handleFileChange}
-            accept="image/*,video/*" // Cho phép cả ảnh và video
+            accept="image/*" // Cho phép tải lên hình ảnh cho poster
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Thời Lượng */}
         <div>
           <label className="block">Thời Lượng</label>
           <input
             type="text"
-            name="duration"
-            value={filmData.duration}
+            name="movieLength"
+            value={filmData.movieLength}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Mô Tả */}
         <div>
           <label className="block">Mô Tả</label>
           <textarea
-            name="description"
-            value={filmData.description}
+            name="movieDescription"
+            value={filmData.movieDescription}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Trailer */}
         <div>
           <label className="block">Trailer</label>
           <input
             type="file"
-            name="trailer"
+            name="movieTrailer"
             onChange={handleFileChange}
-            accept="video/*" // Chỉ cho phép video cho trailer
+            accept="video/*" // Chỉ cho phép tải lên video cho trailer
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Thể Loại */}
         <div>
           <label className="block">Thể Loại</label>
           <input
             type="text"
-            name="genre"
-            value={filmData.genre}
+            name="movieGenre"
+            value={filmData.movieGenre}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Ngày Ra Mắt */}
         <div>
           <label className="block">Ngày Ra Mắt</label>
           <input
             type="date"
             name="releaseDate"
-            value={filmData.releaseDate}
+            value={filmData.releaseDate} // Đảm bảo giá trị releaseDate là chuỗi "yyyy-mm-dd"
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Ngôn Ngữ */}
         <div>
           <label className="block">Ngôn Ngữ</label>
           <input
             type="text"
-            name="language"
-            value={filmData.language}
+            name="movieLanguage"
+            value={filmData.movieLanguage}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Đạo Diễn */}
         <div>
           <label className="block">Đạo Diễn</label>
           <input
@@ -146,16 +201,20 @@ const AddFilm = () => {
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Diễn Viên */}
         <div>
           <label className="block">Diễn Viên</label>
           <input
             type="text"
-            name="actors"
-            value={filmData.actors}
+            name="cast"
+            value={filmData.cast}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
+
+        {/* Rated */}
         <div>
           <label className="block">Rated</label>
           <input
@@ -166,7 +225,12 @@ const AddFilm = () => {
             className="w-full border px-3 py-2 rounded-sm"
           />
         </div>
-        <button type="submit" className="w-full py-2 bg-green-500 text-white rounded mt-4">
+
+        {/* Nút Lưu */}
+        <button
+          type="submit"
+          className="w-full py-2 bg-green-500 text-white rounded mt-4"
+        >
           Thêm Phim
         </button>
       </form>

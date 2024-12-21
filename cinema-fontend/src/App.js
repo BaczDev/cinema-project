@@ -9,9 +9,9 @@ import MovieDetail from './pages/MovieDetail/MovieDetail';
 import BookingPage from './pages/booking/BookingPage';
 import SeatSelectionPage from './pages/seat/SeatSelectionPage';
 import PaymentHistoryPage from './pages/PaymentHistory/PaymentHistoryPage';
-import { AuthProvider } from './context/AuthContext';
 import Profile from './pages/profile/Profile';
 import Dashboard from './pages/admin/Dashboard'; // Import Dashboard
+import CinemaSelection from './pages/cinema/CinemaSelection';
 
 // Component Layout: Render Header/Footer dựa vào điều kiện
 const Layout = ({ children }) => {
@@ -31,7 +31,6 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Trạng thái đăng nhập
   
   return (
-    <AuthProvider>
       <Router>
         <Layout>
           <Routes>
@@ -40,7 +39,8 @@ const App = () => {
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
             <Route path="/booking/:id" element={<BookingPage />} />
-            <Route path="/booking/:id/seat/:time" element={<SeatSelectionPage />} />
+            <Route path="/cinema/:movieId" element={<CinemaSelection />} />
+            <Route path="/booking/:movieId/seat/:showtimeId" element={<SeatSelectionPage />} />
             <Route path="/payment-history" element={<PaymentHistoryPage />} />
             <Route path="/profile" element={<Profile />} />
 
@@ -49,7 +49,6 @@ const App = () => {
           </Routes>
         </Layout>
       </Router>
-    </AuthProvider>
   );
 };
 

@@ -1,19 +1,42 @@
-import React from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
-//import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import {  Form, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { register } from '../../service/userService';
 
-export default function Register(props) {
+export default function Register() {
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  //   const dispatch = useDispatch();
-  //   const { userLogin } = useSelector(state => state.UserReducer)
 
-  //   const onFinish = (values) => {
-  //     const action = dangKyAction(values);
-  //     dispatch(action)
-  //   };
-  //   const onFinishFailed = (errorInfo) => {
-  //     console.log('Failed:', errorInfo);
-  //   };
+  const handleRegister = async () => {
+    try {
+      let res = await register(userName, password, email, phoneNumber);
+      if(res.status === 200){
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  const getValueUsername = (value) => {
+    setUserName(value);
+  }
+
+  const getValuePassword = (value) => {
+    setPassword(value);
+  }
+
+  const getValueEmail = (value) => {
+    setEmail(value);
+  }
+
+  const getValuePhoneNumber = (value) => {
+    setPhoneNumber(value);
+  }
 
   return (
     <div 
@@ -38,8 +61,7 @@ export default function Register(props) {
           initialValues={{
             remember: false,
           }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+
           autoComplete="off"
         >
           <div>
@@ -56,9 +78,13 @@ export default function Register(props) {
                 message: 'Tên đăng nhập không được để trống!',
                 transform: (value) => value.trim(),
               },
+              {
+                min: 5, 
+                message: 'Tên đăng nhập phải có ít nhất 5 ký tự!',
+              }
             ]}
           >
-            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Tên đăng nhập" />
+            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Tên đăng nhập" onChange={(e) => getValueUsername(e.target.value)} />
           </Form.Item>
 
           <Form.Item
@@ -70,9 +96,13 @@ export default function Register(props) {
                 message: 'Password không được để trống!',
                 transform: (value) => value.trim(),
               },
+              {
+                min: 6,
+                message: 'mật khẩu phải có ít nhất 6 kí tự!',
+              }
             ]}
           >
-            <Input.Password className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Mật khẩu" />
+            <Input.Password className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Mật khẩu" onChange={(e) => getValuePassword(e.target.value)} />
           </Form.Item>
 
           <Form.Item
@@ -90,20 +120,23 @@ export default function Register(props) {
               },
             ]}
           >
-            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Email" />
+            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Email" onChange={(e) => getValueEmail(e.target.value)}/>
           </Form.Item>
 
           <Form.Item
             label=""
-            name="soDt"
+            name="phoneNumber"
             rules={[
               {
                 required: true,
                 message: 'Số điện thoại không được để trống!',
-              },
+              },{
+                min: 10,
+                message: 'Số điện thoại phải có 10 số!'
+              }
             ]}
           >
-            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Số điện thoại" />
+            <Input className="d-flex block text-sm py-3 px-4 mt-2 rounded-lg w-full border outline-none" placeholder="Số điện thoại" onChange={(e) => getValuePhoneNumber(e.target.value)}/>
           </Form.Item>
 
           <Form.Item
@@ -119,7 +152,8 @@ export default function Register(props) {
           </Form.Item>
 
           <div className="text-center mt-6">
-            <button type="submit" className="py-2 w-64 text-xl text-white bg-purple-400 rounded-xl">Đăng ký</button>
+            <button type="submit" className="py-2 w-64 text-xl text-white bg-purple-400 rounded-xl"
+             onClick={() => handleRegister()}>Đăng ký</button>
             <p className="mt-4 text-sm">Bạn đã có tài khoản? <a href='login' className="underline  cursor-pointer"> Đăng nhập</a></p>
           </div>
         </Form>

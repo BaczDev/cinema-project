@@ -1,29 +1,58 @@
-import React, { useState } from 'react';
-
+import React, { useState } from "react";
+import { useEffect } from "react";
+import {
+  getAllUsers,
+  deleteUser,
+  updateByAdmin,
+} from "../../service/userService";
 const UserManager = () => {
-  const [users, setUsers] = useState([
-    { id: 1, username: 'hoang123', phone: '0123456789', email: 'hoang@gmail.com', role: 'user' },
-    { id: 2, username: 'trithuc456', phone: '0987654321', email: 'trithuc@gmail.com', role: 'admin' },
-  ]);
-  
+  const [users, setUsers] = useState([]);
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Kiểm tra popup có mở không
   const [selectedUser, setSelectedUser] = useState(null); // Lưu người dùng được chọn để chỉnh sửa
   const [updatedUser, setUpdatedUser] = useState({
-    phone: '',
-    email: '',
-    role: '',
+    phoneNumber: "",
+    email: "",
+    roleId: "",
+    password: "",
   });
 
-  const deleteUser = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
+  useEffect(() => {
+    getAll();
+  }, []);
+
+  const token = localStorage.getItem("token");
+  //================================================================
+  const getAll = async () => {
+    let res = await getAllUsers(token);
+
+    if (res && res.data && res.data.data) {
+      setUsers(res.data.data);
+    }
+  };
+
+
+  //================================================================
+  const deleted = async (id) => {
+    try {
+      let res = await deleteUser(id, token);
+      if (res.status === 200) {
+        alert("Đã xóa người dùng ");
+        getAll();
+      }
+    } catch (error) {
+      alert("Xóa người dùng thất bại");
+    }
   };
 
   const openEditModal = (user) => {
+    console.log(user);
     setSelectedUser(user);
     setUpdatedUser({
-      phone: user.phone,
+      phoneNumber: user.phoneNumber,
       email: user.email,
-      role: user.role,
+      roleId: user.role.roleId,
+      password: user.password,
     });
     setIsEditModalOpen(true);
   };
@@ -33,14 +62,26 @@ const UserManager = () => {
     setUpdatedUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdateUser = () => {
-    // Cập nhật người dùng
-    setUsers(
-      users.map((user) =>
-        user.id === selectedUser.id ? { ...user, ...updatedUser } : user
-      )
-    );
-    setIsEditModalOpen(false);
+  console.log(selectedUser);
+  const updatedData = {
+    ...(updatedUser.password && { password: updatedUser.password }),
+    phoneNumber: updatedUser.phoneNumber,
+    email: updatedUser.email,
+    roleId: updatedUser.roleId,
+  };
+  //================================================================
+  const handleUpdateUser = async () => {
+    try {
+      const res = await updateByAdmin(selectedUser.userId, updatedData, token);
+
+      if (res.status === 200) {
+        alert("Cập nhật người dùng thành công!");
+        getAll();
+        setIsEditModalOpen(false);
+      }
+    } catch (error) {
+      alert("Cập nhật người dùng thất bại!");
+    }
   };
 
   return (
@@ -60,15 +101,23 @@ const UserManager = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id} className="text-center hover:bg-gray-100">
-              <td className="border border-gray-300 px-4 py-2">{user.id}</td>
-              <td className="border border-gray-300 px-4 py-2">{user.username}</td>
-              <td className="border border-gray-300 px-4 py-2">{user.phone}</td>
+              <td className="border border-gray-300 px-4 py-2">
+                {user.userId}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {user.userName}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {user.phoneNumber}
+              </td>
               <td className="border border-gray-300 px-4 py-2">{user.email}</td>
-              <td className="border border-gray-300 px-4 py-2">{user.role}</td>
+              <td className="border border-gray-300 px-4 py-2">
+                {user.role.roleName}
+              </td>
               <td className="border border-gray-300 px-4 py-2">
                 <button
                   className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2"
-                  onClick={() => deleteUser(user.id)}
+                  onClick={() => deleted(user.userId)}
                 >
                   Xóa
                 </button>
@@ -94,8 +143,8 @@ const UserManager = () => {
                 <label className="block font-medium">Số Điện Thoại</label>
                 <input
                   type="text"
-                  name="phone"
-                  value={updatedUser.phone}
+                  name="phoneNumber"
+                  value={updatedUser.phoneNumber}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
                 />
@@ -113,14 +162,25 @@ const UserManager = () => {
               <div className="mb-4">
                 <label className="block font-medium">Vai Trò</label>
                 <select
-                  name="role"
-                  value={updatedUser.role}
+                  name="roleId"
+                  value={updatedUser.roleId}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
                 >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="1">User</option>
+                  <option value="2">Admin</option>
                 </select>
+              </div>
+              <div className="mb-4">
+                <label className="block font-medium">Mật Khẩu</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={updatedUser.password}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Nhập mật khẩu mới"
+                />
               </div>
               <div className="flex justify-end">
                 <button

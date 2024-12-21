@@ -1,30 +1,89 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from "react";
+import { getProfile } from "../../service/userService";
 const Profile = () => {
-  // Dữ liệu thông tin cá nhân (giả lập)
-  const [userData, setUserData] = useState({
-    username: 'Hoang',
-    email: 'phamhuyhoang@gmail.com',
-    phone: '0123-456-789',
-    accountType: 'KhachHang',
+  const token = localStorage.getItem("token");
+  const [data, setData] = useState({
+    userName: "",
+    email: "",
+    phoneNumber: "",
+    role: {
+      roleName: ""
+    }
   });
+
+  const getData = async () => {
+    try {
+      if (token) {
+        const res = await getProfile(token);
+        setData(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   // Dữ liệu lịch sử mua vé (giả lập)
   const ticketHistory = [
-    { id: 'V001', movie: 'Avengers: Endgame', cinema: 'Bacz Cinema - Hà Nội', showtime: '2024-06-01 | 19:00', room: 'Phòng 1', seat: 'A12' },
-    { id: 'V002', movie: 'Spider-Man: No Way Home', cinema: 'Bacz Cinema - Hà Nội', showtime: '2024-06-05 | 21:30', room: 'Phòng 2', seat: 'B7' },
-    { id: 'V003', movie: 'The Batman', cinema: 'Bacz Cinema - TP HCM', showtime: '2024-06-10 | 20:00', room: 'Phòng 3', seat: 'C5' },
-    { id: 'V004', movie: 'Inception', cinema: 'Bacz Cinema - Hà Nội', showtime: '2024-06-15 | 18:30', room: 'Phòng 4', seat: 'D10' },
-    { id: 'V005', movie: 'Interstellar', cinema: 'Bacz Cinema - TP HCM', showtime: '2024-06-20 | 22:00', room: 'Phòng 5', seat: 'E8' },
-    { id: 'V006', movie: 'Joker', cinema: 'Bacz Cinema - Đà Nẵng', showtime: '2024-06-25 | 17:00', room: 'Phòng 6', seat: 'F3' },
+    {
+      id: "V001",
+      movie: "Avengers: Endgame",
+      cinema: "Bacz Cinema - Hà Nội",
+      showtime: "2024-06-01 | 19:00",
+      room: "Phòng 1",
+      seat: "A12",
+    },
+    {
+      id: "V002",
+      movie: "Spider-Man: No Way Home",
+      cinema: "Bacz Cinema - Hà Nội",
+      showtime: "2024-06-05 | 21:30",
+      room: "Phòng 2",
+      seat: "B7",
+    },
+    {
+      id: "V003",
+      movie: "The Batman",
+      cinema: "Bacz Cinema - TP HCM",
+      showtime: "2024-06-10 | 20:00",
+      room: "Phòng 3",
+      seat: "C5",
+    },
+    {
+      id: "V004",
+      movie: "Inception",
+      cinema: "Bacz Cinema - Hà Nội",
+      showtime: "2024-06-15 | 18:30",
+      room: "Phòng 4",
+      seat: "D10",
+    },
+    {
+      id: "V005",
+      movie: "Interstellar",
+      cinema: "Bacz Cinema - TP HCM",
+      showtime: "2024-06-20 | 22:00",
+      room: "Phòng 5",
+      seat: "E8",
+    },
+    {
+      id: "V006",
+      movie: "Joker",
+      cinema: "Bacz Cinema - Đà Nẵng",
+      showtime: "2024-06-25 | 17:00",
+      room: "Phòng 6",
+      seat: "F3",
+    },
   ];
 
   // Trạng thái mở form thay đổi thông tin
   const [showEditForm, setShowEditForm] = useState(false);
   const [formData, setFormData] = useState({
-    email: userData.email,
-    phone: userData.phone,
-    password: '',
+    email: data.email,
+    phone: data.phone,
+    password: "",
   });
 
   // Xử lý thay đổi input form
@@ -36,13 +95,13 @@ const Profile = () => {
   // Xử lý submit form
   const handleSubmit = (e) => {
     e.preventDefault();
-    setUserData((prev) => ({
+    setData((prev) => ({
       ...prev,
       email: formData.email,
       phone: formData.phone,
     }));
     setShowEditForm(false);
-    alert('Thông tin đã được cập nhật thành công!');
+    alert("Thông tin đã được cập nhật thành công!");
   };
 
   return (
@@ -62,7 +121,7 @@ const Profile = () => {
                 <label className="block font-medium">Tên Đăng Nhập:</label>
                 <input
                   type="text"
-                  value={userData.username}
+                  value={data.userName}
                   readOnly
                   className="w-full border rounded px-3 py-2 mt-1 bg-gray-100"
                 />
@@ -71,7 +130,7 @@ const Profile = () => {
                 <label className="block font-medium">Email:</label>
                 <input
                   type="email"
-                  value={userData.email}
+                  value={data.email}
                   readOnly
                   className="w-full border rounded px-3 py-2 mt-1 bg-gray-100"
                 />
@@ -80,7 +139,7 @@ const Profile = () => {
                 <label className="block font-medium">Số Điện Thoại:</label>
                 <input
                   type="text"
-                  value={userData.phone}
+                  value={data.phoneNumber}
                   readOnly
                   className="w-full border rounded px-3 py-2 mt-1 bg-gray-100"
                 />
@@ -89,7 +148,7 @@ const Profile = () => {
                 <label className="block font-medium">Loại Tài Khoản:</label>
                 <input
                   type="text"
-                  value={userData.accountType}
+                  value={data.role.roleName}
                   readOnly
                   className="w-full border rounded px-3 py-2 mt-1 bg-gray-100"
                 />
@@ -115,22 +174,43 @@ const Profile = () => {
                 <thead className="bg-gray-200">
                   <tr>
                     <th className="border border-gray-300 px-2 py-2">Mã Vé</th>
-                    <th className="border border-gray-300 px-2 py-2">Tên Phim</th>
-                    <th className="border border-gray-300 px-2 py-2">Tên Rạp</th>
-                    <th className="border border-gray-300 px-2 py-2">Suất Chiếu</th>
+                    <th className="border border-gray-300 px-2 py-2">
+                      Tên Phim
+                    </th>
+                    <th className="border border-gray-300 px-2 py-2">
+                      Tên Rạp
+                    </th>
+                    <th className="border border-gray-300 px-2 py-2">
+                      Suất Chiếu
+                    </th>
                     <th className="border border-gray-300 px-2 py-2">Phòng</th>
                     <th className="border border-gray-300 px-2 py-2">Ghế</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ticketHistory.map((ticket) => (
-                    <tr key={ticket.id} className="text-center hover:bg-gray-100">
-                      <td className="border border-gray-300 px-2 py-2">{ticket.id}</td>
-                      <td className="border border-gray-300 px-2 py-2">{ticket.movie}</td>
-                      <td className="border border-gray-300 px-2 py-2">{ticket.cinema}</td>
-                      <td className="border border-gray-300 px-2 py-2">{ticket.showtime}</td>
-                      <td className="border border-gray-300 px-2 py-2">{ticket.room}</td>
-                      <td className="border border-gray-300 px-2 py-2">{ticket.seat}</td>
+                    <tr
+                      key={ticket.id}
+                      className="text-center hover:bg-gray-100"
+                    >
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.id}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.movie}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.cinema}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.showtime}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.room}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        {ticket.seat}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
