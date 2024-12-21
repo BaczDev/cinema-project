@@ -1,32 +1,21 @@
 package com.booking_cinema.service.movie;
 
 import com.booking_cinema.dto.request.movie.MovieRequest;
+import com.booking_cinema.dto.request.movie.MovieUpdateRequest;
 import com.booking_cinema.dto.response.movie.MovieResponse;
 import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
 import com.booking_cinema.model.Movie;
 import com.booking_cinema.repository.MovieRepository;
 import com.booking_cinema.service.cloudinary.ICloudinaryUpload;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -108,11 +97,10 @@ public class MovieService implements IMovieService{
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    public MovieResponse updateMovie(Long movieId, MovieRequest request) {
+    public MovieResponse updateMovie(Long movieId, MovieUpdateRequest request) {
         Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
         existingMovie.setMovieName(request.getMovieName());
-        existingMovie.setMoviePosterUrl(request.getMoviePosterUrl());
         existingMovie.setMovieLength(request.getMovieLength());
         movieRepository.save(existingMovie);
         MovieResponse movieResponse = MovieResponse.toMovieResponse(existingMovie);

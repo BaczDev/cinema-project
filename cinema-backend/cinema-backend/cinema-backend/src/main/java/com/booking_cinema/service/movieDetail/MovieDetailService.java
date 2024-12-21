@@ -1,6 +1,7 @@
 package com.booking_cinema.service.movieDetail;
 
 import com.booking_cinema.dto.request.movieDetail.MovieDetailRequest;
+import com.booking_cinema.dto.request.movieDetail.MovieDetailUpdateRequest;
 import com.booking_cinema.dto.response.movieDetail.MovieDetailResponse;
 import com.booking_cinema.exception.AppException;
 import com.booking_cinema.exception.ErrorCode;
@@ -124,13 +125,12 @@ public class MovieDetailService implements IMovieDetailService{
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    public MovieDetailResponse updateMovieDetail(Long movieDetailId, MovieDetailRequest request) {
+    public MovieDetailResponse updateMovieDetail(Long movieDetailId, MovieDetailUpdateRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_NOTFOUND));
         MovieDetail existingMovieDetail = movieDetailRepository.findById(movieDetailId).orElseThrow(() ->
                 new AppException(ErrorCode.MOVIE_DETAIL_NOTFOUND));
         existingMovieDetail.setMovieDescription(request.getMovieDescription());
-        existingMovieDetail.setMovieTrailer(request.getMovieTrailer());
         existingMovieDetail.setMovieGenre(request.getMovieGenre());
         existingMovieDetail.setReleaseDate(request.getReleaseDate());
         existingMovieDetail.setMovieLanguage(request.getMovieLanguage());

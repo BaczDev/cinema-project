@@ -1,6 +1,7 @@
 package com.booking_cinema.service.movie;
 
 import com.booking_cinema.dto.request.movie.MovieRequest;
+import com.booking_cinema.dto.request.movie.MovieUpdateRequest;
 import com.booking_cinema.dto.response.movie.MovieResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,6 @@ public interface IMovieService {
     List<MovieResponse> getAllMovie();
     MovieResponse createMovie(MovieRequest request);
     String uploadPoster(Long movieId, MultipartFile file);
-    MovieResponse updateMovie(Long movieId, MovieRequest request);
+    MovieResponse updateMovie(Long movieId, MovieUpdateRequest request);
     void deleteMovie(Long movieId);
 }

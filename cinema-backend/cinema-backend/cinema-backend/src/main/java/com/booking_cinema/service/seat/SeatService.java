@@ -21,7 +21,7 @@ public class SeatService implements ISeatService{
     private final RoomRepository roomRepository;
 
     @Override
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public List<SeatResponse> getSeatWithRoomId(Long roomId) {
         roomRepository.findById(roomId).orElseThrow(() ->
                 new AppException(ErrorCode.ROOM_NOTFOUND));

@@ -1,6 +1,7 @@
 package com.booking_cinema.controller;
 
 import com.booking_cinema.dto.request.movieDetail.MovieDetailRequest;
+import com.booking_cinema.dto.request.movieDetail.MovieDetailUpdateRequest;
 import com.booking_cinema.dto.response.apiResponse.ApiResponse;
 import com.booking_cinema.dto.response.movieDetail.MovieDetailResponse;
 import com.booking_cinema.service.movieDetail.IMovieDetailService;
@@ -60,7 +61,7 @@ public class MovieDetailController {
     }
 
     @PutMapping("/update/{movieDetailId}")
-    public ApiResponse<MovieDetailResponse> updateMovieDetail(@PathVariable Long movieDetailId, @RequestBody @Valid MovieDetailRequest request){
+    public ApiResponse<MovieDetailResponse> updateMovieDetail(@PathVariable Long movieDetailId, @RequestBody @Valid MovieDetailUpdateRequest request){
         return ApiResponse.<MovieDetailResponse>builder()
                 .success(true)
                 .errorCode(0)
