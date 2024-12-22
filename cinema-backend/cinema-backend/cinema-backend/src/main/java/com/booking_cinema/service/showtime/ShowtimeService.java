@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -66,6 +67,31 @@ public class ShowtimeService implements IShowtimeService{
                                 showTime.getUpdatedAt()
                         ))
                         .toList();
+    }
+
+    @Override
+    public List<ShowtimeResponse> getShowtimeByCriteria(Long cinemaId, Long movieId, LocalDate showDate) {
+        cinemaRepository.findById(cinemaId).orElseThrow(() ->
+                new AppException(ErrorCode.CINEMA_NOTFOUND));
+        movieRepository.findById(movieId).orElseThrow(() ->
+                new AppException(ErrorCode.MOVIE_NOTFOUND));
+
+        List<ShowTime> showTimes = showtimeRepository.findByCinemaId_CinemaIdAndMovieId_MovieIdAndShowDate(
+                cinemaId, movieId, showDate
+        );
+        return showTimes.stream()
+                .map(showTime -> new ShowtimeResponse(
+                        showTime.getShowtimeId(),
+                        showTime.getShowDate(),
+                        showTime.getStartTime(),
+                        showTime.getEndTime(),
+                        showTime.getMovieId().getMovieId(),
+                        showTime.getCinemaId().getCinemaId(),
+                        showTime.getRoomId().getRoomId(),
+                        showTime.getCreatedAt(),
+                        showTime.getUpdatedAt()
+                ))
+                .toList();
     }
 
     @Override
@@ -135,4 +161,6 @@ public class ShowtimeService implements IShowtimeService{
                 new AppException(ErrorCode.SHOWTIME_NOTFOUND));
         showtimeRepository.deleteById(showtimeId);
     }
+
+
 }

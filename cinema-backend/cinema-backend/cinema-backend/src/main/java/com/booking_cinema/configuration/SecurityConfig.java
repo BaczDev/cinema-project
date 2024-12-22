@@ -35,7 +35,7 @@ public class SecurityConfig {
     private String[] PUBLIC_ENDPOINT_GET = {"/api/v1/cinema","/api/v1/cinema/**",
                                             "/api/v1/movie", "/api/v1/movie/**",
                                             "/api/v1/movieDetail/movie/**", "/api/v1/movieDetail",
-                                            "/api/v1/showtime/cinema/**", "/api/v1/showtime/movie/**",
+                                            "/api/v1/showtime/cinema/**", "/api/v1/showtime/movie/**", "/api/v1/showtime**"
 
     };
 

@@ -7,8 +7,10 @@ import com.booking_cinema.service.showtime.IShowtimeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,20 @@ public class ShowtimeController {
                 .errorCode(0)
                 .errorMessage("")
                 .data(iShowtimeService.getShowtimeWithMovieId(movieId))
+                .build();
+    }
+
+    @GetMapping("")
+    public ApiResponse<List<ShowtimeResponse>> getShowtimeByCriteria(
+            @RequestParam Long cinemaId,
+            @RequestParam Long movieId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate showDate
+    ){
+        return ApiResponse.<List<ShowtimeResponse>>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iShowtimeService.getShowtimeByCriteria(cinemaId, movieId, showDate))
                 .build();
     }
 
