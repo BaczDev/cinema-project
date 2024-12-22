@@ -54,6 +54,19 @@ public class ShowtimeController {
                 .build();
     }
 
+    @GetMapping("/byCinemaAndMovie")
+    public ApiResponse<List<ShowtimeResponse>> getShowtimeByCinemaAndMovie(
+            @RequestParam Long cinemaId,
+            @RequestParam Long movieId
+    ){
+        return ApiResponse.<List<ShowtimeResponse>>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iShowtimeService.getShowtimeByCinemaAndMovie(cinemaId, movieId))
+                .build();
+    }
+
     @PostMapping("/create")
     public ApiResponse<ShowtimeResponse> createShowtime(@RequestBody @Valid ShowtimeRequest request){
         return ApiResponse.<ShowtimeResponse>builder()

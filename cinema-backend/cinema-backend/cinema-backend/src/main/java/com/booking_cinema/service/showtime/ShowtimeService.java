@@ -95,6 +95,18 @@ public class ShowtimeService implements IShowtimeService{
     }
 
     @Override
+    public List<ShowtimeResponse> getShowtimeByCinemaAndMovie(Long cinemaId, Long movieId) {
+        cinemaRepository.findById(cinemaId).orElseThrow(() ->
+                new AppException(ErrorCode.CINEMA_NOTFOUND));
+        movieRepository.findById(movieId).orElseThrow(() ->
+                new AppException(ErrorCode.MOVIE_NOTFOUND));
+        List<ShowTime> showTimes = showtimeRepository.findByCinemaId_CinemaIdAndMovieId_MovieId(cinemaId, movieId);
+        return showTimes.stream()
+                        .map(ShowtimeResponse::toShowtimeResponse)
+                        .toList();
+    }
+
+    @Override
     @PreAuthorize("hasRole('ADMIN')")
     public ShowtimeResponse createShowtime(ShowtimeRequest request) {
         Movie existingMovie = movieRepository.findById(request.getMovieId()).orElseThrow(() ->

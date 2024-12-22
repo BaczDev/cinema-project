@@ -14,4 +14,6 @@ public interface IShowtimeService {
     void deleteShowtime(Long showtimeId);
 
     List<ShowtimeResponse> getShowtimeByCriteria(Long cinemaId, Long movieId, LocalDate showDate);
+
+    List<ShowtimeResponse> getShowtimeByCinemaAndMovie(Long cinemaId, Long movieId);
 }
