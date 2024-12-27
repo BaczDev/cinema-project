@@ -83,9 +83,13 @@ const Header = () => {
             <div
               ref={avatarRef}
               onClick={toggleMenu}
-              className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white cursor-pointer"
+              className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white cursor-pointer overflow-hidden"
             >
-              A {/* Avatar giả lập */}
+              <img
+                src="https://cdn.vntre.vn/default/avatar-meo-1724730902.jpg"
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
             </div>
             {isMenuOpen && (
               <div

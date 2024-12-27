@@ -37,10 +37,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-            <Route path="/movie/:id" element={<MovieDetail />} />
-            <Route path="/booking/:id" element={<BookingPage />} />
-            <Route path="/cinema/:movieId" element={<CinemaSelection />} />
-            <Route path="/booking/:movieId/seat/:showtimeId" element={<SeatSelectionPage />} />
+            <Route path="/movieDetail" element={<MovieDetail />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/cinema" element={<CinemaSelection />} />
+            <Route path="/seatSelected" element={<SeatSelectionPage />} />
             <Route path="/payment-history" element={<PaymentHistoryPage />} />
             <Route path="/profile" element={<Profile />} />
 

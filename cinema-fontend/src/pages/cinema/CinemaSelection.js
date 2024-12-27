@@ -1,23 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-const cinemas = [
-  {
-    id: 1,
-    name: 'HUYCINEMA Hà Đông',
-    address: 'Tầng 4, Mê Linh Plaza Hà Đông, Đ. Tô Hiệu, P. Hà Đông, Hà Nội',
-    phone: '0938473829',
-    map: 'https://via.placeholder.com/300x200', // URL bản đồ thay thế
-  },
-  {
-    id: 2,
-    name: 'HUYCINEMA Thủ Đức',
-    address: '216 Đ. Võ Văn Ngân, Bình Thọ, Thủ Đức, Thành phố Hồ Chí Minh',
-    phone: '1900 6017',
-    map: 'https://via.placeholder.com/300x200', // URL bản đồ thay thế
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { getCinemas } from '../../service/cinemaService';
+
 
 const CinemaSelection = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const movieId = queryParams.get("movieId"); 
+
+  const [cinemas, setCinemas] = useState([]);
+  useEffect(() => {
+    fetchCinemas();
+  },[]);
+
+  const fetchCinemas = async () => {
+    const res = await getCinemas(movieId);
+    setCinemas(res.data.data);
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen p-6">
       <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
@@ -26,22 +27,22 @@ const CinemaSelection = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {cinemas.map((cinema) => (
           <div
-            key={cinema.id}
+            key={cinema.cinemaId}
             className="bg-white shadow-md rounded-lg overflow-hidden"
           >
             {/* Map Image */}
             <img
-              src={cinema.map}
-              alt={`Bản đồ của ${cinema.name}`}
+              src={"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/97/27/16/cinema-rex.jpg?w=1200&h=-1&s=1"}
+              alt={`Bản đồ của ${cinema.cinemaName}`}
               className="w-full h-48 object-cover"
             />
             {/* Cinema Info */}
             <div className="p-4">
               <h2 className="text-xl font-semibold text-gray-800">
-                {cinema.name}
+                {cinema.cinemaName}
               </h2>
-              <p className="text-gray-600">{cinema.address}</p>
-              <Link to={`/booking/${cinema.id}`}  
+              <p className="text-gray-600">{cinema.cinemaAddress}</p>
+              <Link to={`/booking?movieId=${movieId}&cinemaId=${cinema.cinemaId}`}  
                     className="mt-4 block w-full py-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded text-center transition duration-300">
                 Chọn
               </Link>

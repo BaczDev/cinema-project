@@ -27,5 +27,15 @@ const updateByAdmin = (userId, updatedData, token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 }
+const updateByUser = (token, userId, password, email, phoneNumber) => {
+  return axios.put(
+    `/api/v1/users/update/${userId}`,
+    { password, email, phoneNumber },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
 
-export {getProfile, register, getAllUsers, deleteUser, updateByAdmin};
+
+export {getProfile, register, getAllUsers, deleteUser, updateByAdmin, updateByUser};

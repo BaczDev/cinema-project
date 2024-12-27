@@ -15,10 +15,12 @@ export default function Register() {
     try {
       let res = await register(userName, password, email, phoneNumber);
       if(res.status === 200){
+        alert("Đăng ký thành công!");
         navigate("/login");
       }
     } catch (error) {
       console.error(error);
+      alert("Đăng ký thất bại, tên đăng nhập đã tồn tại!");
     }
   }
   

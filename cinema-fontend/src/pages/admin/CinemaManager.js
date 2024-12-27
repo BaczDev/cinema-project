@@ -4,9 +4,8 @@ import {
   createCinema,
   updateCinema,
   deleteCinema,
-  getRooms,
-  createRoom,
 } from "../../service/cinemaService";
+import { getRooms, createRoom } from "../../service/roomService";
 const CinemaManager = () => {
   const [cinemas, setCinemas] = useState([]);
 

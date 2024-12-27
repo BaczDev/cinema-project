@@ -48,19 +48,6 @@ const deleteMovie = (token, movieId) => {
         }});
 }
 
-const addShowtime = (token, showDate, startTime, endTime, movieId, cinemaId, roomId) => {
-    return axios.post(`/api/v1/showtime/create`, {
-        showDate: showDate,
-        startTime: startTime,
-        endTime: endTime,
-        movieId: movieId,
-        cinemaId: cinemaId,
-        roomId: roomId
-    }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-}
 
-export { getMovies, createMovie, uploadPoster, getMovie, updateMovie, deleteMovie, addShowtime };
+
+export { getMovies, createMovie, uploadPoster, getMovie, updateMovie, deleteMovie };

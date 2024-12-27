@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   getMovies,
   deleteMovie,
-  addShowtime,
 } from "../../service/movieService";
-import { getCinemas, getRooms } from "../../service/cinemaService";
+import { getCinemas} from "../../service/cinemaService";
+import { addShowtime } from "../../service/showtimeService";
+import { getRooms } from "../../service/roomService";
 
 const FilmManager = ({ setSelectedFilm, setSelectedMenu }) => {
   const [films, setFilms] = useState([]);

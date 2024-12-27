@@ -1,5 +1,4 @@
-// src/components/Login.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import { loginApi } from "../../service/authService";
@@ -7,7 +6,6 @@ import { loginApi } from "../../service/authService";
 export default function Login() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
-
   const [password, setPassword] = useState("");
 
   const decodeToken = (token) => {
@@ -28,30 +26,26 @@ export default function Login() {
 
       if (response.data && response.data.data.token) {
         const token = response.data.data.token; // Lấy token từ phản hồi
-        const {expiresAt, role} = decodeToken(token);
+        const { expirationTime, role } = decodeToken(token);
 
         localStorage.setItem("token", token);
-        console.log(role)
-        if(role === "ADMIN"){
-          navigate("/admin");
-        }else{
-          navigate("/");
+
+        if (expirationTime) {
+          // Lưu thời gian hết hạn vào localStorage
+          localStorage.setItem("tokenExpiresAt", expirationTime.getTime());
         }
 
-        if (expiresAt) {
-          // Đặt hẹn giờ tự động xoá token
-          const remainingTime = expiresAt.getTime() - new Date().getTime();
-          setTimeout(() => {
-            localStorage.removeItem("token");
-            navigate("/login");
-          }, remainingTime);
+        if (role === "ADMIN") {
+          navigate("/admin");
+        } else {
+          navigate("/");
         }
-       
       } else {
         console.log("Token không tồn tại trong phản hồi");
       }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
+      alert("Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng!");
     }
   };
 
@@ -62,6 +56,26 @@ export default function Login() {
   const getValuePassword = (value) => {
     setPassword(value);
   };
+
+  const checkTokenExpiration = () => {
+    const token = localStorage.getItem("token");
+    const tokenExpiresAt = localStorage.getItem("tokenExpiresAt");
+
+    if (token && tokenExpiresAt) {
+      const currentTime = new Date().getTime();
+      if (currentTime > tokenExpiresAt) {
+        // Token đã hết hạn, xóa token và chuyển đến trang login
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiresAt");
+        navigate("/login");
+      }
+    }
+  };
+
+  // Kiểm tra khi app khởi động lại
+  useEffect(() => {
+    checkTokenExpiration();
+  }, []);
 
   return (
     <div

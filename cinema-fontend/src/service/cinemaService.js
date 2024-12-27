@@ -4,6 +4,10 @@ const getCinemas = () => {
     return axios.get("/api/v1/cinema");
 }
 
+const getCinemaWithId = (cinemaId) => {
+    return axios.get(`/api/v1/cinema/${cinemaId}`);
+}
+
 const createCinema = (token, newCinema) => {
     return axios.post("/api/v1/cinema/create", newCinema, {
         headers: { Authorization: `Bearer ${token}` },
@@ -22,17 +26,6 @@ const deleteCinema = (token, cinemaId) => {
     });
 }
 
-//room
-const getRooms = (token, cinemaId) => {
-    return axios.get(`/api/v1/room/cinema/${cinemaId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-}
 
-const createRoom = (token, roomName, cinemaId) => {
-    return axios.post(`/api/v1/room/create`, { roomName, cinemaId }, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-}
  
-export { getCinemas, createCinema, updateCinema, deleteCinema, getRooms, createRoom };
+export { getCinemas, createCinema, updateCinema, deleteCinema, getCinemaWithId };

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getProfile } from "../../service/userService";
+import { getBookingHistory } from "../../service/bookingService";
+import { updateByUser } from "../../service/userService";
 const Profile = () => {
   const token = localStorage.getItem("token");
   const [data, setData] = useState({
@@ -7,15 +9,30 @@ const Profile = () => {
     email: "",
     phoneNumber: "",
     role: {
-      roleName: ""
-    }
+      roleName: "",
+    },
   });
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const getData = async () => {
     try {
       if (token) {
         const res = await getProfile(token);
         setData(res.data.data);
+        console.log(res.data.data);
+        setIsDataLoaded(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPaymentHistory = async () => {
+    try {
+      if (token) {
+        const res = await getBookingHistory(token, data.userId);
+        setPaymentHistory(res.data.data);
       }
     } catch (error) {
       console.log(error);
@@ -26,57 +43,14 @@ const Profile = () => {
     getData();
   }, []);
 
-  // Dữ liệu lịch sử mua vé (giả lập)
-  const ticketHistory = [
-    {
-      id: "V001",
-      movie: "Avengers: Endgame",
-      cinema: "Bacz Cinema - Hà Nội",
-      showtime: "2024-06-01 | 19:00",
-      room: "Phòng 1",
-      seat: "A12",
-    },
-    {
-      id: "V002",
-      movie: "Spider-Man: No Way Home",
-      cinema: "Bacz Cinema - Hà Nội",
-      showtime: "2024-06-05 | 21:30",
-      room: "Phòng 2",
-      seat: "B7",
-    },
-    {
-      id: "V003",
-      movie: "The Batman",
-      cinema: "Bacz Cinema - TP HCM",
-      showtime: "2024-06-10 | 20:00",
-      room: "Phòng 3",
-      seat: "C5",
-    },
-    {
-      id: "V004",
-      movie: "Inception",
-      cinema: "Bacz Cinema - Hà Nội",
-      showtime: "2024-06-15 | 18:30",
-      room: "Phòng 4",
-      seat: "D10",
-    },
-    {
-      id: "V005",
-      movie: "Interstellar",
-      cinema: "Bacz Cinema - TP HCM",
-      showtime: "2024-06-20 | 22:00",
-      room: "Phòng 5",
-      seat: "E8",
-    },
-    {
-      id: "V006",
-      movie: "Joker",
-      cinema: "Bacz Cinema - Đà Nẵng",
-      showtime: "2024-06-25 | 17:00",
-      room: "Phòng 6",
-      seat: "F3",
-    },
-  ];
+  useEffect(() => {
+    if (isDataLoaded) {
+      // Kiểm tra xem dữ liệu đã được tải chưa
+      getPaymentHistory();
+    }
+  }, [isDataLoaded]);
+
+  
 
   // Trạng thái mở form thay đổi thông tin
   const [showEditForm, setShowEditForm] = useState(false);
@@ -86,6 +60,15 @@ const Profile = () => {
     password: "",
   });
 
+  
+  useEffect(() => {
+    setFormData({
+      email: data.email,
+      phone: data.phoneNumber,
+      password: "",
+    });
+  }, [data, showEditForm]);
+
   // Xử lý thay đổi input form
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,16 +76,37 @@ const Profile = () => {
   };
 
   // Xử lý submit form
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setData((prev) => ({
-      ...prev,
-      email: formData.email,
-      phone: formData.phone,
-    }));
-    setShowEditForm(false);
-    alert("Thông tin đã được cập nhật thành công!");
-  };
+  // Xử lý submit form
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    if (token && data.userId) {
+      // Gọi API để cập nhật thông tin
+      const response = await updateByUser(
+        token,
+        data.userId,
+        formData.password,
+        formData.email,
+        formData.phone
+      );
+      
+      if (response.status === 200) {
+        // Cập nhật lại dữ liệu hiển thị
+        setData((prev) => ({
+          ...prev,
+          email: formData.email,
+          phoneNumber: formData.phone,
+        }));
+        alert("Thông tin đã được cập nhật thành công!");
+        setShowEditForm(false);
+      }
+    }
+  } catch (error) {
+    console.error("Có lỗi xảy ra khi cập nhật thông tin:", error);
+    alert("Cập nhật thông tin thất bại. Vui lòng thử lại!");
+  }
+};
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 p-4">
@@ -110,8 +114,12 @@ const Profile = () => {
         <div className="flex flex-col md:flex-row">
           {/* Thông tin người dùng */}
           <div className="w-full md:w-1/3 p-6 border-b md:border-r border-gray-300">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-gray-300 flex items-center justify-center text-4xl md:text-5xl text-white font-bold rounded-full mx-auto mb-6">
-              H
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-gray-300 flex items-center justify-center text-4xl md:text-5xl text-white font-bold rounded-full mx-auto mb-6 overflow-hidden">
+            <img
+                src="https://cdn.vntre.vn/default/avatar-meo-1724730902.jpg"
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
             </div>
             <h1 className="text-xl md:text-2xl font-semibold text-center mb-4">
               Thông tin người dùng
@@ -188,28 +196,28 @@ const Profile = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ticketHistory.map((ticket) => (
+                  {paymentHistory.map((payment) => (
                     <tr
-                      key={ticket.id}
+                      key={payment.bookingId}
                       className="text-center hover:bg-gray-100"
                     >
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.id}
+                        {payment.bookingId}
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.movie}
+                        {payment.movieName}
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.cinema}
+                        {payment.cinemaName}
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.showtime}
+                        {payment.showDate} | {payment.startTime} 
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.room}
+                        {payment.roomName}
                       </td>
                       <td className="border border-gray-300 px-2 py-2">
-                        {ticket.seat}
+                        {`${String.fromCharCode(64 + payment.rowSeat)}${payment.number}`}
                       </td>
                     </tr>
                   ))}

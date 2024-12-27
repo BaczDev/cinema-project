@@ -1,34 +1,21 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 
-
-// Hàm tạo chuỗi random 10 ký tự
-const generateRandomString = (length = 10) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    result += characters[randomIndex];
-  }
-  return result;
-};
 const PaymentHistoryPage = () => {
   const location = useLocation();
-  const { title, theater, date, room, seat, showDate } = location.state || {}; // Nhận dữ liệu từ state
+  const { movieName, cinema, date, room, seat, showDate, bookingIds } = location.state || {}; // Nhận dữ liệu từ state
   console.log('Received state in PaymentHistoryPage:', location.state);
 
-  // Nếu `seat` chứa nhiều ghế, tạo danh sách booking
-  const bookings = seat
+  // Nếu có `bookingIds` và `seat`, tạo danh sách booking
+  const bookings = bookingIds && seat
     ? seat.split(', ').map((seatNumber, index) => ({
-        id: `${index + 1}-${generateRandomString()}`,   // Mã vé = id + chuỗi random
-        title,
-        theater,
+        id: bookingIds[index], // Sử dụng `bookingId` từ danh sách nhận được
+        movieName,
+        cinema,
         date,
         room,
         seat: seatNumber,
-        showDate
+        showDate,
       }))
     : [];
 
@@ -53,9 +40,11 @@ const PaymentHistoryPage = () => {
                 bookings.map((booking) => (
                   <tr key={booking.id}>
                     <td className="py-2 px-4">{booking.id}</td>
-                    <td className="py-2 px-4">{booking.title}</td>
-                    <td className="py-2 px-4">{booking.theater}</td>
-                    <td className="py-2 px-4">{booking.date}, {booking.showDate}</td>
+                    <td className="py-2 px-4">{booking.movieName}</td>
+                    <td className="py-2 px-4">{booking.cinema}</td>
+                    <td className="py-2 px-4">
+                      {booking.date}, {booking.showDate}
+                    </td>
                     <td className="py-2 px-4">{booking.room}</td>
                     <td className="py-2 px-4">{booking.seat}</td>
                   </tr>
