@@ -16,9 +16,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
-    @Column(name = "price")
-    private float price;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;

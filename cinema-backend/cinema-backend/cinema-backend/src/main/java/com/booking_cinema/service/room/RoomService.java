@@ -71,8 +71,10 @@ public class RoomService implements IRoomService{
                 seat.setNumber(col);
                 if(row < 4){
                     seat.setSeatType("normal");
+                    seat.setPrice(50000);
                 }else {
                     seat.setSeatType("vip");
+                    seat.setPrice(65000);
                 }
                 seat.setRoomId(newRoom);
                 seats.add(seat);

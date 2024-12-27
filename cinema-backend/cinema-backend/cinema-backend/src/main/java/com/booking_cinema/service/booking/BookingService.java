@@ -61,7 +61,6 @@ public class BookingService implements IBookingService{
         List<Booking> newBookings = new ArrayList<>();
         for (Seat seat : seats) {
             Booking newBooking = new Booking();
-            newBooking.setPrice(request.getPrice());
             newBooking.setUserId(existingUser);
             newBooking.setCinemaId(existingCinema);
             newBooking.setMovieId(existingMovie);
@@ -90,5 +89,13 @@ public class BookingService implements IBookingService{
         return list.stream()
                    .map(BookingResponse::toBookingResponse)
                    .toList();
+    }
+
+    @Override
+    public List<BookingResponse> getAllBooking() {
+        List<Booking> list = bookingRepository.findAll();
+        return list.stream()
+                .map(BookingResponse::toBookingResponse)
+                .toList();
     }
 }

@@ -26,6 +26,8 @@ public class Seat extends BaseEntity {
     @Column(name = "row_seat")
     private int rowSeat;
 
+    private int price;
+
     @JoinColumn(name = "room_id")
     @ManyToOne
     private Room roomId;

@@ -36,7 +36,8 @@ public class SecurityConfig {
                                             "/api/v1/movie", "/api/v1/movie/**",
                                             "/api/v1/movieDetail/movie/**", "/api/v1/movieDetail",
                                             "/api/v1/showtime/cinema/**", "/api/v1/showtime/movie/**",
-                                            "/api/v1/showtime**", "/api/v1/showtime/**"
+                                            "/api/v1/showtime**", "/api/v1/showtime/**",
+                                            "/api/v1/booking**"
 
     };
 

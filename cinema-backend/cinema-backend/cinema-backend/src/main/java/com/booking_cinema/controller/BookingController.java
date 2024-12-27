@@ -38,4 +38,14 @@ public class BookingController {
                 .data(iBookingService.getBookingWithUserId(userId))
                 .build();
     }
+
+    @GetMapping("")
+    public ApiResponse<List<BookingResponse>> getAllBooking(){
+        return ApiResponse.<List<BookingResponse>>builder()
+                .success(true)
+                .errorCode(0)
+                .errorMessage("")
+                .data(iBookingService.getAllBooking())
+                .build();
+    }
 }

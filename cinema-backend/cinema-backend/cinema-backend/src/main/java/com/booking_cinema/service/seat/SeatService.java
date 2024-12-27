@@ -32,6 +32,7 @@ public class SeatService implements ISeatService{
                         seat.getSeatType(),
                         seat.getNumber(),
                         seat.getRowSeat(),
+                        seat.getPrice(),
                         seat.getRoomId().getRoomId(),
                         seat.getCreatedAt(),
                         seat.getUpdatedAt()

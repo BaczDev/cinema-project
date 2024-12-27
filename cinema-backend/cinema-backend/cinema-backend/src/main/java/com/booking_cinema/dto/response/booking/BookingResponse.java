@@ -7,29 +7,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class BookingResponse {
     private Long bookingId;
-    private float price;
-    private float totalMoney;
     private Long userId;
-    private Long cinemaId;
-    private Long movieId;
     private Long seatId;
-    private Long showtimeId;
+    private String cinemaName;
+    private String movieName;
+    private int rowSeat;
+    private int number;
+    private String startTime;
+    private LocalDate showDate;
+    private String roomName;
 
     public static BookingResponse toBookingResponse(Booking booking){
         return BookingResponse.builder()
                 .bookingId(booking.getBookingId())
-                .price(booking.getPrice())
                 .userId(booking.getUserId().getUserId())
-                .cinemaId(booking.getCinemaId().getCinemaId())
-                .movieId(booking.getMovieId().getMovieId())
                 .seatId(booking.getSeatId().getSeatId())
-                .showtimeId(booking.getShowtimeId().getShowtimeId())
+                .cinemaName(booking.getCinemaId().getCinemaName())
+                .movieName(booking.getMovieId().getMovieName())
+                .rowSeat(booking.getSeatId().getRowSeat())
+                .number(booking.getSeatId().getNumber())
+                .startTime(booking.getShowtimeId().getStartTime())
+                .showDate(booking.getShowtimeId().getShowDate())
+                .roomName(booking.getSeatId().getRoomId().getRoomName())
                 .build();
     }
 }

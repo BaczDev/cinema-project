@@ -14,10 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BookingRequest {
-    @NotNull(message = "PRICE_NOTNULL")
-    private float price;
-
-    private float totalMoney;
 
     @NotNull(message = "USER_ID_NOTNULL")
     private Long userId;

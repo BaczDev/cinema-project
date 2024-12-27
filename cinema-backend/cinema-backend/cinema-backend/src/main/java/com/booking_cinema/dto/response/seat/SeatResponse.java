@@ -17,6 +17,7 @@ public class SeatResponse {
     private String seatType;
     private int number;
     private int rowSeat;
+    private int price;
     private Long roomId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -27,6 +28,7 @@ public class SeatResponse {
                 .seatType(seat.getSeatType())
                 .number(seat.getNumber())
                 .rowSeat(seat.getRowSeat())
+                .price(seat.getPrice())
                 .roomId(seat.getRoomId().getRoomId())
                 .createdAt(seat.getCreatedAt())
                 .updatedAt(seat.getUpdatedAt())
